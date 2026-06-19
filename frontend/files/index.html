@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form
+      date-form-registration
+      action=""
+      style="display: flex; flex-direction: column; width: 20%"
+    >
+      <input name="first_name" type="text" placeholder="Имя" />
+      <input name="last_name" type="text" placeholder="Фамилия" />
+      <input name="midlle_name" type="text" placeholder="Отчество" />
+      <input name="email" type="email" placeholder="Почта" />
+      <input maxlength="12" name="phone" type="tel" placeholder="Телефон" />
+      <input
+        minlength="8"
+        type="password"
+        name="password_one"
+        placeholder="Пароль"
+      />
+      <input
+        minlength="8"
+        type="password"
+        name="password_two"
+        placeholder="Пароль повторить"
+      />
+
+      <button type="submit">Отправить</button>
+    </form>
+
+    <form action="" data-form-autarization>
+      <input name="id" type="text" placeholder="ID" />
+      <button type="submit">Найти</button>
+    </form>
+    <script>
+      const formRegistration = document.querySelector(
+        "[date-form-registration]",
+      );
+
+      formRegistration.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const formData = new FormData(formRegistration);
+        const formObject = Object.fromEntries(formData.entries());
+        const formDataFromJSON = JSON.stringify(formObject);
+        try {
+          const respone = await fetch("/registration", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: formDataFromJSON,
+          });
+        } catch (error) {
+          console.log("Ошибка сети- ", error);
+        }
+      });
+
+      const formAutarization = document.querySelector(
+        "[data-form-autarization]",
+      );
+    </script>
+    <script>
+      formAutarization.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(formAutarization);
+        const formObject = Object.fromEntries(formData.entries());
+        const formDataFromJSON = JSON.stringify(formObject);
+        const respone = fetch("/autarization", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: formDataFromJSON,
+        });
+      });
+    </script>
+  </body>
+</html>

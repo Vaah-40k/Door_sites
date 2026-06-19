@@ -1,0 +1,162 @@
+@font-face {
+  font-family: "AdventPro-Bold";
+  src: url("../fonts/AdventPro-Bold.ttf");
+}
+@font-face {
+  font-family: "AdventPro-Regular";
+  src: url("../fonts/AdventPro-Regular.ttf");
+}
+.registration {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  padding: 3% 0;
+  background-color: #f5f5f5;
+  margin-left: -12.5%;
+  margin-right: -12.5%;
+}
+.reg-content {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  width: 50%;
+  max-width: 600px;
+}
+.reg-content h1 {
+  font-family: "AdventPro-Bold";
+  font-size: 2.5em;
+  color: #000000;
+  text-align: center;
+  padding-bottom: 5%;
+  border-bottom: 3px solid #33cccc;
+  display: inline-block;
+  width: 100%;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.reg-content .row,
+.reg-content .row5,
+.reg-content .row6,
+.reg-content .row7 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.reg-content label {
+  font-family: "AdventPro-Regular";
+  font-size: 1.1em;
+  color: #333;
+  min-width: 150px;
+  font-weight: 500;
+}
+.reg-content input {
+  flex: 1;
+  padding: 12px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 5px;
+  font-family: "AdventPro-Regular";
+  font-size: 1em;
+  transition: all 0.3s ease;
+  background-color: #fff;
+}
+.reg-content input:focus {
+  outline: none;
+  border-color: #ff5f2f;
+  box-shadow: 0 0 5px rgba(255, 95, 47, 0.3);
+}
+.reg-content input:hover {
+  border-color: #ff5f2f;
+}
+.reg-content input::placeholder {
+  color: #999;
+  font-family: "AdventPro-Regular";
+}
+.form-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 30px;
+  gap: 15px;
+}
+.form-btn button {
+  border: none;
+  background-color: #ff5f2f;
+  color: rgb(255, 255, 255);
+  font-family: "AdventPro-Bold";
+  font-size: 1.2em;
+  padding: 12px 40px;
+  cursor: pointer;
+  width: auto;
+  min-width: 200px;
+}
+.form-btn button:hover {
+  background-color: #e04e22;
+}
+
+.form-btn p {
+  font-family: "AdventPro-Regular";
+  font-size: 0.9em;
+  margin: 0;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+  width: 100%;
+}
+.form-btn p:contains("успешна") {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+.form-btn p:contains("не совпадают"),
+.form-btn p:contains("Ошибка") {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+  .reg-content {
+    width: 90%;
+    padding: 20px;
+  }
+
+  .reg-content .row,
+  .reg-content .row5,
+  .reg-content .row6,
+  .reg-content .row7 {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .reg-content label {
+    min-width: auto;
+  }
+
+  .reg-content input {
+    width: 100%;
+  }
+
+  .form-btn button {
+    width: 100%;
+  }
+}
+.reg-content input[type="tel"] {
+  letter-spacing: 1px;
+}
+.reg-content input[type="password"] {
+  font-family: "AdventPro-Regular";
+  letter-spacing: 2px;
+}
+.form-btn a {
+  cursor: pointer;
+}
+.form-btn a:hover {
+  color: #e04e22;
+}

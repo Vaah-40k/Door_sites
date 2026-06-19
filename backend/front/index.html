@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JWT Аутентификация</title>
+    <style>
+      .protected-data {
+        margin-top: 20px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        display: none;
+      }
+      .error {
+        color: red;
+      }
+      .success {
+        color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Форма регистрации -->
+    <form
+      data-form-registration
+      style="display: flex; flex-direction: column; width: 20%"
+    >
+      <h3>Регистрация</h3>
+      <input name="first_name" type="text" placeholder="Имя" required />
+      <input name="last_name" type="text" placeholder="Фамилия" required />
+      <input name="midlle_name" type="text" placeholder="Отчество" />
+      <input name="email" type="email" placeholder="Почта" required />
+      <input
+        maxlength="12"
+        name="phone"
+        type="tel"
+        placeholder="Телефон"
+        required
+      />
+      <input
+        minlength="8"
+        type="password"
+        name="password_one"
+        placeholder="Пароль"
+        required
+      />
+      <input
+        minlength="8"
+        type="password"
+        name="password_two"
+        placeholder="Пароль повторить"
+        required
+      />
+      <button type="submit">Зарегистрироваться</button>
+    </form>
+
+    <!-- Форма авторизации по ID -->
+    <!-- Форма авторизации -->
+    <form data-form-authorization style="margin-top: 20px">
+      <h3>Авторизация</h3>
+      <input name="email" type="email" placeholder="Email" required />
+      <input name="password" type="password" placeholder="Пароль" required />
+      <button type="submit">Войти</button>
+    </form>
+
+    <!-- Кнопки для работы с защищенными маршрутами -->
+    <div style="margin-top: 20px">
+      <button id="getProfileBtn">Получить профиль (требуется токен)</button>
+      <button id="refreshTokenBtn">Обновить токены</button>
+      <button id="logoutBtn">Выйти</button>
+    </div>
+
+    <!-- Блок для отображения защищенных данных -->
+    <div id="protectedData" class="protected-data">
+      <h3>Защищенные данные:</h3>
+      <pre id="dataContent"></pre>
+    </div>
+
+    <div id="message"></div>
+
+    <!-- Будущая моадлка -->
+    <p>Модалка с пользователей</p>
+    <form
+      date-modal-chat-user
+      action=""
+      style="border: 1px black solid; width: 20%"
+    >
+      <p>
+        ТекстТекстТекстТекстТекстТекстТекстТекстТекстТекстТекстТекстТекстТекстТекстТекстТекстТекстТекстТекстТекс
+        тТекстТекстТекстТекстТекстТекстТекстТекстТекстТекстТекстТекстТекстТекстТекстТекстТекстТекстТекстТекстТекстТекстТекст
+      </p>
+      <input name="textUser" type="text" placeholder="Напишите свой вопрос" />
+      <button type="submit">Задать вопрос</button>
+    </form>
+
+    <!-- От админа -->
+    <p>
+      страница админа
+      <button data-reload-administrator-page>Обновить страницу</button>
+    </p>
+    <button data-show-all-message-user>Показать всех пользователей</button>
+
+    <!-- Каталог -->
+    <p>Каталог</p>
+    <div
+      style="width: 70%; display: flex; justify-content: space-between"
+      data-catalogs
+    ></div>
+
+    <!-- Корзина -->
+    <div
+      data-basket
+      style="width: 100px; height: 100px; background-color: antiquewhite"
+    ></div>
+
+    <!-- Личный кибинет  -->
+
+    <p>Кнопка показывающая инфу из личного кабинета</p>
+    <button data-info-lk>Посмотреть инфу из ЛК</button>
+    <script>
+      const ReloadAdministratorPage = document.querySelector(
+        "[data-reload-administrator-page]",
+      );
+
+      console.log(ReloadAdministratorPage);
+      ReloadAdministratorPage.addEventListener("click", () => {
+        location.reload();
+      });
+      const showAllUser = document.querySelector(
+        "[data-show-all-message-user]",
+      );
+      showAllUser.addEventListener("click", () => {
+        fetch("/show-all-message-user", {
+          method: "POST",
+        });
+      });
+
+      // Хранилище токенов
+      let accessToken = localStorage.getItem("accessToken");
+      let refreshToken = localStorage.getItem("refreshToken");
+
+      // Функция для отображения сообщений
+      function showMessage(text, isError = false) {
+        const messageDiv = document.getElementById("message");
+        messageDiv.textContent = text;
+        messageDiv.className = isError ? "error" : "success";
+        setTimeout(() => {
+          messageDiv.textContent = "";
+        }, 3000);
+      }
+
+      // Функция для выполнения запросов с токеном
+      async function fetchWithAuth(url, options = {}) {
+        if (!accessToken) {
+          throw new Error("Нет токена доступа");
+        }
+
+        const headers = {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+          ...options.headers,
+        };
+
+        const response = await fetch(url, {
+          ...options,
+          headers,
+        });
+
+        if (response.status === 403) {
+          // Токен просрочен, пробуем обновить
+          try {
+            const newTokens = await refreshTokens();
+            // Повторяем запрос с новым токеном
+            headers["Authorization"] = `Bearer ${accessToken}`;
+            return await fetch(url, {
+              ...options,
+              headers,
+            });
+          } catch (error) {
+            throw new Error("Сессия истекла, войдите заново");
+          }
+        }
+
+        return response;
+      }
+
+      // Функция обновления токенов
+      async function refreshTokens() {
+        if (!refreshToken) {
+          throw new Error("Нет refresh токена");
+        }
+
+        const response = await fetch("/refresh-token", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ refreshToken }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Не удалось обновить токены");
+        }
+
+        const data = await response.json();
+        accessToken = data.accessToken;
+        refreshToken = data.refreshToken;
+
+        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("refreshToken", refreshToken);
+
+        return { accessToken, refreshToken };
+      }
+
+      // Регистрация
+      const formRegistration = document.querySelector(
+        "[data-form-registration]",
+      );
+      formRegistration.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const formData = new FormData(formRegistration);
+        const formObject = Object.fromEntries(formData.entries());
+
+        try {
+          const response = await fetch("/registration", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formObject),
+          });
+
+          const data = await response.json();
+          console.log(data);
+          if (response.ok) {
+            // Сохраняем токены
+            if (data.accessToken && data.refreshToken) {
+              accessToken = data.accessToken;
+              refreshToken = data.refreshToken;
+              localStorage.setItem("accessToken", accessToken);
+              localStorage.setItem("refreshToken", refreshToken);
+            }
+
+            showMessage(`Регистрация успешна! Ваш ID: ${data.id_user}`);
+            formRegistration.reset();
+          } else {
+            showMessage(data.message || "Ошибка регистрации", true);
+          }
+        } catch (error) {
+          console.error("Ошибка сети - ", error);
+          showMessage("Ошибка сети", true);
+        }
+      });
+
+      // Авторизация
+      const formAuthorization = document.querySelector(
+        "[data-form-authorization]",
+      );
+      formAuthorization.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const formData = new FormData(formAuthorization);
+        const formObject = Object.fromEntries(formData.entries());
+
+        try {
+          const response = await fetch("/authorization", {
+            // путь исправлен
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formObject),
+          });
+          const data = await response.json();
+          console.log(data);
+          if (response.ok) {
+            accessToken = data.accessToken;
+            refreshToken = data.refreshToken;
+            localStorage.setItem("accessToken", accessToken);
+            localStorage.setItem("refreshToken", refreshToken);
+            showMessage(
+              `Добро пожаловать, ${data.user.first_name || data.user.email}!`,
+            );
+            formAuthorization.reset();
+          } else {
+            showMessage(data.message, true);
+          }
+        } catch (error) {
+          showMessage("Ошибка сети", true);
+        }
+      });
+
+      // Получение профиля (защищенный маршрут)
+      document
+        .getElementById("getProfileBtn")
+        .addEventListener("click", async () => {
+          try {
+            const response = await fetchWithAuth("/profile");
+
+            if (!response.ok) {
+              throw new Error("Ошибка получения данных");
+            }
+
+            const data = await response.json();
+            const protectedDiv = document.getElementById("protectedData");
+            const contentDiv = document.getElementById("dataContent");
+
+            contentDiv.textContent = JSON.stringify(data, null, 2);
+            protectedDiv.style.display = "block";
+            showMessage("Данные успешно получены");
+          } catch (error) {
+            showMessage(error.message, true);
+          }
+        });
+
+      // Обновление токенов вручную
+      document
+        .getElementById("refreshTokenBtn")
+        .addEventListener("click", async () => {
+          try {
+            await refreshTokens();
+            showMessage("Токены успешно обновлены");
+          } catch (error) {
+            showMessage(error.message, true);
+          }
+        });
+
+      // Выход
+      document
+        .getElementById("logoutBtn")
+        .addEventListener("click", async () => {
+          try {
+            await fetch("/logout", { method: "POST" });
+          } catch (error) {
+            console.error("Ошибка при выходе", error);
+          }
+
+          // Очищаем токены
+          accessToken = null;
+          refreshToken = null;
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+
+          // Скрываем защищенные данные
+          document.getElementById("protectedData").style.display = "none";
+          showMessage("Вы вышли из системы");
+        });
+
+      // Если токены уже есть при загрузке страницы
+      if (accessToken) {
+        showMessage("Вы уже авторизованы");
+      }
+
+      // модалка;
+      const modalChatUser = document.querySelector("[date-modal-chat-user]");
+      modalChatUser.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const formData = new FormData(modalChatUser);
+        const formObject = Object.fromEntries(formData.entries());
+        const emptyFormObject = formObject.textUser.replaceAll(" ", "");
+        if (emptyFormObject.length === 0) {
+          alert("Введите текст для задачи вопроса");
+          return;
+        }
+        const response = await fetchWithAuth(
+          "/send-message-user-to-administrator",
+          {
+            method: "POST",
+            body: JSON.stringify(formObject),
+          },
+        );
+        console.log("Пользователь написал новое сообщение ");
+      });
+
+      // КАТАЛОГ
+      const catalog = document.querySelector("[data-catalogs]");
+      document.addEventListener("DOMContentLoaded", async (event) => {
+        const respone = await fetch("/show_cards", {
+          method: "POST",
+        });
+        const data = await respone.json();
+        console.log(data);
+
+        console.log(data.data.length);
+        for (let i = 0; i < data.data.length; ++i) {
+          let html = `
+          <div style="background-color: aqua;">
+          <p>${data.data[i].descriprion_primary}</p>
+          <p>${data.data[i].description_secundus}</p>
+          <button data-id-tovar="${data.data[i].ID_card}">Кнопка</button>
+          </div>
+`;
+          catalog.insertAdjacentHTML("beforeend", html);
+        }
+      });
+      // ---------- КОРЗИНА ----------
+      const basketContainer = document.querySelector("[data-basket]");
+
+      // Загрузка и отображение корзины
+      async function loadBasket() {
+        if (!accessToken) {
+          basketContainer.innerHTML =
+            "<p>Авторизуйтесь, чтобы видеть корзину</p>";
+          return;
+        }
+        try {
+          const response = await fetchWithAuth("/basket");
+          if (!response.ok) throw new Error("Ошибка загрузки корзины");
+          const data = await response.json();
+          // Убедимся, что data.basket существует и это массив
+          renderBasket(data.basket || []);
+        } catch (error) {
+          console.error(error);
+          basketContainer.innerHTML = `<p class="error">${error.message}</p>`;
+        }
+      }
+
+      // Рендер корзины
+      function renderBasket(basketItems) {
+        if (!Array.isArray(basketItems) || basketItems.length === 0) {
+          basketContainer.innerHTML = "<p>Корзина пуста</p>";
+          return;
+        }
+
+        let html = `<h3>Ваша корзина</h3>`;
+        let totalCartSum = 0;
+
+        basketItems.forEach((item) => {
+          const product = item.product;
+          if (!product) return;
+          const itemTotal = item.full_price;
+          totalCartSum += itemTotal;
+
+          html += `
+      <div class="basket-item" data-basket-id="${item.id_basket}">
+        <div class="basket-item-info">
+          <strong>${product.descriprion_primary || "Товар"}</strong><br>
+          <small>${product.description_secundus || ""}</small><br>
+          Цена: ${product.price} ₽ | Количество: 
+          <input type="number" min="1" value="${item.quantity}" class="basket-quantity" data-id="${item.id_basket}" style="width: 60px;">
+          | Сумма: ${itemTotal} ₽
+        </div>
+        <div class="basket-item-actions">
+          <button class="basket-remove" data-id="${item.id_basket}">✖ Удалить</button>
+        </div>
+      </div>
+    `;
+        });
+
+        html += `<div style="margin-top: 20px; font-weight: bold;">Общая сумма: ${totalCartSum} ₽</div>`;
+        basketContainer.innerHTML = html;
+
+        // Вешаем обработчики на динамические элементы
+        document.querySelectorAll(".basket-remove").forEach((btn) => {
+          btn.addEventListener("click", async (e) => {
+            const basketId = btn.dataset.id;
+            await removeFromBasket(basketId);
+          });
+        });
+
+        document.querySelectorAll(".basket-quantity").forEach((input) => {
+          input.addEventListener("change", async (e) => {
+            const basketId = input.dataset.id;
+            const newQuantity = parseInt(input.value);
+            if (isNaN(newQuantity) || newQuantity < 1) return;
+            await updateQuantity(basketId, newQuantity);
+          });
+        });
+      }
+
+      // Добавление товара в корзину
+      async function addToBasket(id_tovar) {
+        if (!accessToken) {
+          showMessage(
+            "Для добавления в корзину необходимо авторизоваться",
+            true,
+          );
+          return;
+        }
+        try {
+          const response = await fetchWithAuth("/basket/add", {
+            method: "POST",
+            body: JSON.stringify({ id_tovar, quantity: 1 }),
+          });
+          const data = await response.json();
+          if (data.success) {
+            showMessage("Товар добавлен в корзину");
+            loadBasket(); // обновляем отображение корзины
+          } else {
+            showMessage(data.message, true);
+          }
+        } catch (error) {
+          showMessage(error.message, true);
+        }
+      }
+
+      // Удаление из корзины
+      async function removeFromBasket(basketId) {
+        try {
+          const response = await fetchWithAuth(`/basket/${basketId}`, {
+            method: "DELETE",
+          });
+          const data = await response.json();
+          if (data.success) {
+            showMessage("Товар удалён из корзины");
+            loadBasket();
+          } else {
+            showMessage(data.message, true);
+          }
+        } catch (error) {
+          showMessage(error.message, true);
+        }
+      }
+
+      // Изменение количества
+      async function updateQuantity(basketId, quantity) {
+        try {
+          const response = await fetchWithAuth(`/basket/${basketId}`, {
+            method: "PATCH",
+            body: JSON.stringify({ quantity }),
+          });
+          const data = await response.json();
+          if (data.success) {
+            loadBasket();
+          } else {
+            showMessage(data.message, true);
+          }
+        } catch (error) {
+          showMessage(error.message, true);
+        }
+      }
+
+      // Переопределяем обработчик кнопок каталога (с делегированием)
+      document
+        .querySelector("[data-catalogs]")
+        .addEventListener("click", (event) => {
+          const button = event.target.closest("[data-id-tovar]");
+          if (button && button.dataset.idTovar) {
+            addToBasket(button.dataset.idTovar);
+          }
+        });
+
+      // При загрузке страницы отображаем корзину, если пользователь авторизован
+      document.addEventListener("DOMContentLoaded", () => {
+        if (accessToken) loadBasket();
+      });
+
+      // После успешной авторизации обновляем корзину
+      formAuthorization.addEventListener("submit", () => {
+        setTimeout(() => {
+          if (accessToken) loadBasket();
+        }, 100);
+      });
+
+      // После выхода очищаем корзину
+      document.getElementById("logoutBtn").addEventListener("click", () => {
+        basketContainer.innerHTML = "";
+      });
+    </script>
+    <script>
+      const infoLk = document.querySelector("[data-info-lk]");
+      infoLk.addEventListener("click", async (event) => {
+        try {
+          const tokenOrigin = localStorage.getItem("accessToken");
+          const respone = await fetch("/profile", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${tokenOrigin}`, // токен в заголовке
+              "Content-Type": "application/json",
+            },
+          });
+          const data = await respone.json();
+        } catch (err) {
+          console.log("Ошибка отправки запроса, ", err);
+        }
+      });
+    </script>
+  </body>
+</html>
