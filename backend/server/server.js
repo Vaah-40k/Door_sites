@@ -7,7 +7,7 @@ const cors = require("cors");
 const dotenv = require("dotenv").config({
   path: path.join(__dirname, "..", "..", "./env"),
 });
-
+//sadadasdadasdsdasdad
 app.use(cors());
 
 const registration = require("./service/registration");
@@ -452,17 +452,21 @@ app.get("/application-show", async (req, res) => {
 });
 
 app.delete("/application-destroy/:id_application", async (req, res) => {
-  try{
+  try {
     const idApplication = req.params.id_application;
     const applicationDestoy = await application.destroy({
       where: {
         id_group_application: idApplication,
       },
     });
-    
+
     res.status(200).json({ seccess: true });
-  }catch (err){
-    res.status(500).json({seccess: false, message:"Произошла ошибка отмены заказов -", err})
+  } catch (err) {
+    res.status(500).json({
+      seccess: false,
+      message: "Произошла ошибка отмены заказов -",
+      err,
+    });
   }
 });
 

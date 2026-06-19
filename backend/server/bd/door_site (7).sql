@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: localhost
--- Время создания: Июн 12 2026 г., 16:35
+-- Время создания: Июн 19 2026 г., 11:45
 -- Версия сервера: 10.4.32-MariaDB
 -- Версия PHP: 8.2.12
 
@@ -66,9 +66,11 @@ CREATE TABLE `all_door` (
 
 CREATE TABLE `application` (
   `id_application` int(255) NOT NULL,
+  `id_group_application` int(255) NOT NULL,
   `id_user` int(255) NOT NULL,
   `Id_tovar` int(255) NOT NULL,
   `adress` text NOT NULL,
+  `status` varchar(255) NOT NULL,
   `quantity` int(255) NOT NULL,
   `full_price` int(255) NOT NULL,
   `price` int(255) NOT NULL,
@@ -83,11 +85,18 @@ CREATE TABLE `application` (
 -- Дамп данных таблицы `application`
 --
 
-INSERT INTO `application` (`id_application`, `id_user`, `Id_tovar`, `adress`, `quantity`, `full_price`, `price`, `title`, `size`, `src_img`, `createdAt`, `updatedAt`) VALUES
-(2, 262, 6, 'хуй твой', 2, 4200, 2100, 'Дверь-гармошка белая', '1000x2000', '/img/doors/accordion_white.jpg', '2026-06-12 12:47:20', '2026-06-12 12:47:20'),
-(3, 262, 16, 'хуй твой', 2, 7900, 3950, 'Дверь Стабильный эко беж', '600x2000', '/img/doors/stable_eco_beige.jpg', '2026-06-12 12:47:51', '2026-06-12 12:47:51'),
-(4, 262, 6, 'хуй твой', 16, 33600, 2100, 'Дверь-гармошка белая', '1000x2000', '/img/doors/accordion_white.jpg', '2026-06-12 12:47:51', '2026-06-12 12:47:51'),
-(5, 262, 5, 'хуй твой', 13, 48100, 3700, 'Ламинированная дверь Орех', '800x2000', '/img/doors/laminate_walnut.jpg', '2026-06-12 12:47:51', '2026-06-12 12:47:51');
+INSERT INTO `application` (`id_application`, `id_group_application`, `id_user`, `Id_tovar`, `adress`, `status`, `quantity`, `full_price`, `price`, `title`, `size`, `src_img`, `createdAt`, `updatedAt`) VALUES
+(48, 5, 264, 6, 'хуй твой', '', 1, 2100, 2100, 'Дверь-гармошка белая', '1000x2000', '/img/doors/accordion_white.jpg', '2026-06-17 06:19:34', '2026-06-17 06:19:34'),
+(49, 6, 264, 6, 'хуй твой', 'в asddasdsadsdadasds', 1, 0, 2100, 'Дверь-гармошка белая', '1000x2000', '/img/doors/accordion_white.jpg', '2026-06-17 06:48:05', '2026-06-17 06:48:05'),
+(50, 6, 264, 5, 'хуй твой', 'в asddasdsadsdadasds', 1, 0, 3700, 'Ламинированная дверь Орех', '800x2000', '/img/doors/laminate_walnut.jpg', '2026-06-17 06:48:05', '2026-06-17 06:48:05'),
+(51, 6, 264, 16, 'хуй твой', 'в asddasdsadsdadasds', 1, 0, 3950, 'Дверь Стабильный эко беж', '600x2000', '/img/doors/stable_eco_beige.jpg', '2026-06-17 06:48:05', '2026-06-17 06:48:05'),
+(52, 7, 265, 6, 'хуй твой', 'в Обработке', 1, 2100, 2100, 'Дверь-гармошка белая', '1000x2000', '/img/doors/accordion_white.jpg', '2026-06-17 08:57:12', '2026-06-17 08:57:12'),
+(53, 8, 265, 5, 'хуй твой', 'в Обработке', 1, 3700, 3700, 'Ламинированная дверь Орех', '800x2000', '/img/doors/laminate_walnut.jpg', '2026-06-17 08:57:26', '2026-06-17 08:57:26'),
+(54, 8, 265, 6, 'хуй твой', 'в Обработке', 1, 2100, 2100, 'Дверь-гармошка белая', '1000x2000', '/img/doors/accordion_white.jpg', '2026-06-17 08:57:26', '2026-06-17 08:57:26'),
+(55, 9, 264, 5, 'хуй твой', 'в Обработке', 7, 0, 3700, 'Ламинированная дверь Орех', '800x2000', '/img/doors/laminate_walnut.jpg', '2026-06-18 08:42:01', '2026-06-18 08:42:01'),
+(56, 9, 264, 6, 'хуй твой', 'в Обработке', 6, 0, 2100, 'Дверь-гармошка белая', '1000x2000', '/img/doors/accordion_white.jpg', '2026-06-18 08:42:01', '2026-06-18 08:42:01'),
+(57, 10, 264, 6, 'хуй твой', 'в Обработке', 4, 8400, 2100, 'Дверь-гармошка белая', '1000x2000', '/img/doors/accordion_white.jpg', '2026-06-18 09:12:51', '2026-06-18 09:12:51'),
+(58, 11, 264, 6, 'хуй твой', 'в Обработке', 21, 44100, 2100, 'Дверь-гармошка белая', '1000x2000', '/img/doors/accordion_white.jpg', '2026-06-18 09:13:16', '2026-06-18 09:13:16');
 
 -- --------------------------------------------------------
 
@@ -122,7 +131,10 @@ INSERT INTO `basket` (`id_basket`, `id_user`, `Id_tovar`, `quantity`, `full_pric
 (22, 253, 1, 1, 123, 0, '2026-06-09 23:24:52', '2026-06-09 23:24:52'),
 (23, 254, 1, 23, 2829, 0, '2026-06-09 23:41:01', '2026-06-10 02:21:37'),
 (24, 258, 1, 3, 369, 0, '2026-06-10 03:24:44', '2026-06-10 03:24:47'),
-(61, 262, 6, 1, 2100, 0, '2026-06-12 13:34:37', '2026-06-12 13:34:37');
+(61, 262, 6, 1, 2100, 0, '2026-06-12 13:34:37', '2026-06-12 13:34:37'),
+(95, 265, 6, 1, 2100, 0, '2026-06-17 09:11:21', '2026-06-17 09:11:21'),
+(105, 264, 6, 1, 2100, 0, '2026-06-18 09:13:35', '2026-06-18 09:13:35'),
+(106, 264, 5, 1, 3700, 0, '2026-06-18 09:13:46', '2026-06-18 09:13:46');
 
 -- --------------------------------------------------------
 
@@ -294,7 +306,11 @@ INSERT INTO `user` (`first_name`, `last_name`, `midlle_name`, `email`, `password
 ('Эдуард', 'Эдуард', 'Антонович', 'elddadasdsadsdarsibrimov18@gmail.com', '$2b$12$DX0AzWYfj2DkBfeP.Cm3POvFyLduuhm9nuNZmMPlVXrymezWOh8EC', '78412545855', '2026-06-10 03:56:36', '2026-06-10 03:56:36', 259),
 ('Эдуард', 'Эдуард', 'Антонович', 'eldarsibrimoasdasdasdasdv18@gmail.com', '$2b$12$Va2ERIzt/FXyMbI.ODvNZupYTCyeyKbWDo3PSHZ/tUFgMelA5Mkli', '78412545855', '2026-06-10 04:21:12', '2026-06-10 04:21:12', 260),
 ('Эдуард', 'Эдуард', 'Антонович', 'eldarasdadasdasibrimdadasdasdsdadasdov18@gmail.com', '$2b$12$4dqZI5l47klZOXy0rBtVJu/ucOxMwhrH1KfaESRpC8C/Y.zA.kmzm', '78412545855', '2026-06-10 04:30:48', '2026-06-10 04:30:48', 261),
-('ЭльдарБлять', 'Эдуард', 'Антонович', 'asdasdasdaseldarsibrimov1812123@gmail.comsaads', '$2b$12$vRAXsBFKXUaVPhU2RiFbQ.qqeOSshuavz9kNOoChp2CJ6qc2MTgPi', '78412545855', '2026-06-12 07:32:05', '2026-06-12 07:32:05', 262);
+('ЭльдарБлять', 'Эдуард', 'Антонович', 'asdasdasdaseldarsibrimov1812123@gmail.comsaads', '$2b$12$vRAXsBFKXUaVPhU2RiFbQ.qqeOSshuavz9kNOoChp2CJ6qc2MTgPi', '78412545855', '2026-06-12 07:32:05', '2026-06-12 07:32:05', 262),
+('Эдуард', 'Эдуард', 'Антонович', '151215eldarsibrimov1812123@gmail.com', '$2b$12$Ua4zggkOI9H0W2BHGdpPJOPYCdtXY4dZXTrltv4QDBGGvpI9lq7gK', '78412545855', '2026-06-15 02:56:29', '2026-06-15 02:56:29', 263),
+('Кира', 'Эдуард', 'Антонович', 'eldarsibriasdasdsadsadasov1812123@gmail.com', '$2b$12$10xi5nKatiaYddXYqvNWX.T/lhcay/9zSdkuGCSiSpl0wtQxV1bMy', '78412545855', '2026-06-15 02:58:19', '2026-06-15 02:58:19', 264),
+('вфывфыв', 'ыфвфывфы', 'фывфывыфв', 'dadsdasddeldarsibrimov1812123@gmail.com', '$2b$12$KWqnaCFBOyh/MvbqHuRYXe6KSs1Zy9HFoiwPlThMmugdAGDeSJSJ6', '78888888888', '2026-06-17 08:56:56', '2026-06-17 08:56:56', 265),
+('фывфывфыв', 'фывфыв', 'фывфывфыв', 'eqwqeqweldarsibrimov1812123@gmail.com', '$2b$12$yPD6WiVgKjs50PRmWCAzfOon6Ui63lnUsU2NyI.5IcyG8KEoHBVJO', '75624563256', '2026-06-18 12:32:02', '2026-06-18 12:32:02', 266);
 
 --
 -- Индексы сохранённых таблиц
@@ -380,13 +396,13 @@ ALTER TABLE `all_door`
 -- AUTO_INCREMENT для таблицы `application`
 --
 ALTER TABLE `application`
-  MODIFY `id_application` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_application` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
 
 --
 -- AUTO_INCREMENT для таблицы `basket`
 --
 ALTER TABLE `basket`
-  MODIFY `id_basket` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
+  MODIFY `id_basket` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=112;
 
 --
 -- AUTO_INCREMENT для таблицы `cards`
@@ -416,7 +432,7 @@ ALTER TABLE `test_card_tovara`
 -- AUTO_INCREMENT для таблицы `user`
 --
 ALTER TABLE `user`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=263;
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=267;
 
 --
 -- Ограничения внешнего ключа сохраненных таблиц
