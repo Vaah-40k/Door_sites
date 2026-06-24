@@ -79,87 +79,87 @@ const Account = () => {
     },
   ]);
   // ЗАПРОС НА ЗАКАЗЫ
-  const fetchApplicationShow = async () => {
-    try {
-      if (!token) {
-        console.warn("Нет токена для загрузки заказов");
-        return;
-      }
-      const response = await fetch(
-        `${import.meta.env.VITE_BASE_URL_BACKEND}/application-show`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-      const result = await response.json();
-      if (!result.success)
-        throw new Error(result.message || "Ошибка загрузки заказов");
+  // const fetchApplicationShow = async () => {
+  //   try {
+  //     if (!token) {
+  //       console.warn("Нет токена для загрузки заказов");
+  //       return;
+  //     }
+  //     const response = await fetch(
+  //       `${import.meta.env.VITE_BASE_URL_BACKEND}/application-show`,
+  //       {
+  //         method: "GET",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       },
+  //     );
+  //     const result = await response.json();
+  //     if (!result.success)
+  //       throw new Error(result.message || "Ошибка загрузки заказов");
 
-      const rawOrders = result.data; // массив записей из application
+  //     const rawOrders = result.data; // массив записей из application
 
-      // Группировка
-      const ordersMap = new Map();
+  //     // Группировка
+  //     const ordersMap = new Map();
 
-      rawOrders.forEach((item) => {
-        const groupId = item.id_group_application;
+  //     rawOrders.forEach((item) => {
+  //       const groupId = item.id_group_application;
 
-        if (groupId === 0 || groupId === null || groupId === undefined) {
-          // Отдельный заказ для каждой записи
-          const orderId = `single_${item.id_application}`;
-          ordersMap.set(orderId, {
-            id: orderId,
-            items: [
-              {
-                id: item.Id_tovar,
-                name: item.title,
-                price: item.price,
-                quantity: item.quantity,
-                image: item.src_img,
-                size: item.size,
-              },
-            ],
-            total: item.price * item.quantity,
-            date: item.createdAt,
-            status: item.status || "В обработке",
-            address: item.adress,
-          });
-        } else {
-          // Группируем по id_group_application
-          if (!ordersMap.has(groupId)) {
-            ordersMap.set(groupId, {
-              id: groupId,
-              items: [],
-              total: 0,
-              date: item.createdAt,
-              status: item.status || "В обработке",
-              address: item.adress,
-            });
-          }
-          const order = ordersMap.get(groupId);
-          order.items.push({
-            id: item.Id_tovar,
-            name: item.title,
-            price: item.price,
-            quantity: item.quantity,
-            image: item.src_img,
-            size: item.size,
-          });
-          order.total += item.price * item.quantity;
-          // При необходимости можно обновить статус, если он разный у товаров в группе
-          // order.status = order.status || item.status;
-        }
-      });
+  //       if (groupId === 0 || groupId === null || groupId === undefined) {
+  //         // Отдельный заказ для каждой записи
+  //         const orderId = `single_${item.id_application}`;
+  //         ordersMap.set(orderId, {
+  //           id: orderId,
+  //           items: [
+  //             {
+  //               id: item.Id_tovar,
+  //               name: item.title,
+  //               price: item.price,
+  //               quantity: item.quantity,
+  //               image: item.src_img,
+  //               size: item.size,
+  //             },
+  //           ],
+  //           total: item.price * item.quantity,
+  //           date: item.createdAt,
+  //           status: item.status || "В обработке",
+  //           address: item.adress,
+  //         });
+  //       } else {
+  //         // Группируем по id_group_application
+  //         if (!ordersMap.has(groupId)) {
+  //           ordersMap.set(groupId, {
+  //             id: groupId,
+  //             items: [],
+  //             total: 0,
+  //             date: item.createdAt,
+  //             status: item.status || "В обработке",
+  //             address: item.adress,
+  //           });
+  //         }
+  //         const order = ordersMap.get(groupId);
+  //         order.items.push({
+  //           id: item.Id_tovar,
+  //           name: item.title,
+  //           price: item.price,
+  //           quantity: item.quantity,
+  //           image: item.src_img,
+  //           size: item.size,
+  //         });
+  //         order.total += item.price * item.quantity;
+  //         // При необходимости можно обновить статус, если он разный у товаров в группе
+  //         // order.status = order.status || item.status;
+  //       }
+  //     });
 
-      const formattedOrders = Array.from(ordersMap.values());
-      setOrders(formattedOrders);
-    } catch (err) {
-      console.error("Ошибка загрузки заказов:", err);
-    }
-  };
+  //     const formattedOrders = Array.from(ordersMap.values());
+  //     setOrders(formattedOrders);
+  //   } catch (err) {
+  //     console.error("Ошибка загрузки заказов:", err);
+  //   }
+  // };
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -209,7 +209,7 @@ const Account = () => {
     };
 
     fetchProfile();
-    fetchApplicationShow();
+    // fetchApplicationShow();
   }, [token]); // зависимость от токена
 
   // Обработчик изменения полей с валидацией

@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import Cart from "./Cart";
+// import Cart from "./Cart";
 const Cart_b3 = ({ filters, addToBasket }) => {
   // Принимаем addToBasket как проп
   const navigate = useNavigate();

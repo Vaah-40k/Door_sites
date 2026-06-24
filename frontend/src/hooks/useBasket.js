@@ -1,244 +1,176 @@
+import { useState, useEffect } from "react";
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import fetchWithAuth from '../utils/fetchWithAuth';
+// данные для корзины
+const mockBasketItems = [
+  {
+    id_basket: 1,
+    id_tovar: 1,
+    title: "Дверь дубовая классическая",
+    price: 15000,
+    quantity: 2,
+    full_price: 30000,
+    src_img: "/src/assets/door1.jpg",
+    alt: "Дверь дубовая",
+    size: "90x200",
+    material: "Массив дуба",
+  },
+  {
+    id_basket: 2,
+    id_tovar: 2,
+    title: "Дверь дубовая с остеклением",
+    price: 18500,
+    quantity: 1,
+    full_price: 18500,
+    src_img: "/src/assets/door2.jpg",
+    alt: "Дверь с стеклом",
+    size: "80x200",
+    material: "Массив дуба",
+  },
+  {
+    id_basket: 3,
+    id_tovar: 3,
+    title: "Дверь дубовая резная",
+    price: 22000,
+    quantity: 1,
+    full_price: 22000,
+    src_img: "/src/assets/door3.jpg",
+    alt: "Дверь резная",
+    size: "100x200",
+    material: "Массив дуба",
+  },
+];
 
 export const useBasket = () => {
   const [basketItems, setBasketItems] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [accessToken, setAccessToken] = useState(
-    localStorage.getItem('accessToken') || null
-  );
+  const [loading, setLoading] = useState(true);
   const [selectedMap, setSelectedMap] = useState({});
-  const isMounted = useRef(true);
-  const initialLoadDone = useRef(false);
 
-  // Загрузка корзины
-  const loadBasket = useCallback(async () => {
-    const token = localStorage.getItem('accessToken');
-    if (!token) {
-      if (isMounted.current) setBasketItems([]);
-      return;
-    }
-    if (isMounted.current) setLoading(true);
-    try {
-      const response = await fetchWithAuth('/basket');
-      if (response.status === 401 || response.status === 403) {
-        localStorage.removeItem('accessToken');
-        if (isMounted.current) {
-          setAccessToken(null);
-          setBasketItems([]);
-        }
-        return;
+  // Загрузка корзины (имитация)
+  const fetchBasket = async () => {
+    setLoading(true);
+    // Имитируем задержку загрузки
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    setBasketItems(mockBasketItems);
+
+    // По умолчанию выделяем все товары
+    const initialSelected = {};
+    mockBasketItems.forEach((item) => {
+      initialSelected[item.id_basket] = true;
+    });
+    setSelectedMap(initialSelected);
+    setLoading(false);
+  };
+
+  // Удаление товара из корзины
+  const removeFromBasket = async (id_basket) => {
+    setLoading(true);
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
+    const updatedItems = basketItems.filter(
+      (item) => item.id_basket !== id_basket,
+    );
+    setBasketItems(updatedItems);
+
+    const newSelectedMap = { ...selectedMap };
+    delete newSelectedMap[id_basket];
+    setSelectedMap(newSelectedMap);
+    setLoading(false);
+
+    window.dispatchEvent(new Event("basketUpdated"));
+  };
+
+  // Обновление количества товара
+  const updateQuantity = async (id_basket, newQuantity) => {
+    if (newQuantity < 1) return;
+
+    setLoading(true);
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
+    const updatedItems = basketItems.map((item) => {
+      if (item.id_basket === id_basket) {
+        return {
+          ...item,
+          quantity: newQuantity,
+          full_price: item.price * newQuantity,
+        };
       }
-      if (!response.ok) throw new Error('Ошибка загрузки корзины');
-      const data = await response.json();
-      const items = data.basket || [];
-      if (isMounted.current) {
-        setBasketItems(items);
-        const initialSelected = {};
-        items.forEach((item) => {
-          initialSelected[item.id_basket] =
-            item.selected === undefined ? false : item.selected;
-        });
-        setSelectedMap(initialSelected);
-      }
-    } catch (error) {
-      console.error(error);
-      if (isMounted.current) setBasketItems([]);
-    } finally {
-      if (isMounted.current) setLoading(false);
-    }
-  }, []);
+      return item;
+    });
+    setBasketItems(updatedItems);
+    setLoading(false);
 
-  // Добавление товара
-  const addToBasket = useCallback(
-    async (id_tovar) => {
-      const token = localStorage.getItem('accessToken');
-      if (!token) {
-        alert('Для добавления в корзину необходимо авторизоваться');
-        return;
-      }
-      try {
-        const response = await fetchWithAuth('/basket/add', {
-          method: 'POST',
-          body: JSON.stringify({ id_tovar, quantity: 1 }),
-        });
-        const data = await response.json();
-        if (data.success) {
-          alert('Товар добавлен в корзину');
-          await loadBasket();
-        } else {
-          alert(data.message);
-        }
-      } catch (error) {
-        alert(error.message);
-      }
-    },
-    [loadBasket]
-  );
+    window.dispatchEvent(new Event("basketUpdated"));
+  };
 
-  // Удаление из корзины
-  const removeFromBasket = useCallback(
-    async (basketId) => {
-      try {
-        const response = await fetchWithAuth(`/basket/${basketId}`, {
-          method: 'DELETE',
-        });
-        const data = await response.json();
-        if (data.success) {
-          alert('Товар удалён из корзины');
-          await loadBasket();
-        } else {
-          alert(data.message);
-        }
-      } catch (error) {
-        alert(error.message);
-      }
-    },
-    [loadBasket]
-  );
-
-  // Изменение количества
-  const updateQuantity = useCallback(
-    async (basketId, quantity) => {
-      const oldItems = [...basketItems];
-      const updatedItems = basketItems.map((item) =>
-        item.id_basket === basketId
-          ? { ...item, quantity, full_price: item.price * quantity }
-          : item
-      );
-      setBasketItems(updatedItems);
-
-      try {
-        await fetchWithAuth(`/basket/${basketId}`, {
-          method: 'PATCH',
-          body: JSON.stringify({ quantity }),
-        });
-      } catch {
-        setBasketItems(oldItems);
-        alert('Не удалось обновить количество');
-      }
-    },
-    [basketItems]
-  );
-
-  // Изменение выбранности
-  const updateSelected = useCallback(async (basketId, selected) => {
-    setSelectedMap((prev) => ({ ...prev, [basketId]: selected }));
-
-    try {
-      await fetchWithAuth(`/basket/${basketId}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ selected }),
-      });
-    } catch (error) {
-      setSelectedMap((prev) => ({ ...prev, [basketId]: !selected }));
-      alert('Не удалось обновить состояние выбранности');
-    }
-  }, []);
+  // Обновление выбора товара
+  const updateSelected = (id_basket, isSelected) => {
+    const newSelectedMap = {
+      ...selectedMap,
+      [id_basket]: isSelected,
+    };
+    setSelectedMap(newSelectedMap);
+  };
 
   // Оформление заказа
-  const handleOrder = useCallback(async () => {
-    const selectedItems = basketItems.filter(
-      (item) => selectedMap[item.id_basket]
+  const handleOrder = async () => {
+    const selectedIds = Object.keys(selectedMap).filter(
+      (id) => selectedMap[id],
     );
-    if (selectedItems.length === 0) {
-      alert('Выберите хотя бы один товар для оформления заказа');
+
+    if (selectedIds.length === 0) {
+      alert("Выберите хотя бы один товар для оформления заказа");
       return;
     }
 
-    const orderData = selectedItems.map((item) => ({
-      id_basket: item.id_basket,
-      quantity: item.quantity,
-      price: item.price,
-      full_price: item.full_price,
-      title: item.title,
-      size: item.size,
-      src_img: item.src_img,
-      selected: item.selected,
-    }));
-    const idBaskets = orderData.map((item) => item.id_basket);
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
-    try {
-      const response = await fetchWithAuth('/application-create', {
-        method: 'POST',
-        body: JSON.stringify({ items: orderData }),
-      });
-      const data = await response.json();
-      if (data.success) {
-        alert('Заказ оформлен успешно!');
-        await fetchWithAuth('/remove-basket-many', {
-          method: 'POST',
-          body: JSON.stringify({ idBaskets }),
-        });
-        window.location.reload();
-      } else {
-        alert(data.message || 'Ошибка оформления заказа');
-      }
-    } catch (error) {
-      alert(error.message);
-    }
-  }, [basketItems, selectedMap]);
+    alert(`Заказ успешно оформлен! Выбрано товаров: ${selectedIds.length}`);
 
-  // Общая сумма выбранных товаров
-  const getTotalSum = useCallback(() => {
-    if (!basketItems || !Array.isArray(basketItems)) return 0;
-    return basketItems.reduce((sum, item) => {
+    // Удаляем выбранные товары из корзины
+    const updatedItems = basketItems.filter(
+      (item) => !selectedIds.includes(String(item.id_basket)),
+    );
+    setBasketItems(updatedItems);
+    setSelectedMap({});
+    window.dispatchEvent(new Event("basketUpdated"));
+  };
+
+  // Получение общей суммы
+  const getTotalSum = () => {
+    return basketItems.reduce((acc, item) => {
       if (selectedMap[item.id_basket]) {
-        return sum + (item.full_price || 0);
+        return acc + (item.full_price || item.price * item.quantity);
       }
-      return sum;
+      return acc;
     }, 0);
-  }, [basketItems, selectedMap]);
+  };
 
-  // Слушаем события авторизации
+  // Загружаем корзину при монтировании
   useEffect(() => {
-    isMounted.current = true;
+    fetchBasket();
 
-    const handleStorageChange = () => {
-      const newToken = localStorage.getItem('accessToken');
-      if (isMounted.current) setAccessToken(newToken);
+    // Слушаем события обновления корзины
+    const handleBasketUpdate = () => {
+      fetchBasket();
     };
 
-    const handleAuthSuccess = () => {
-      const newToken = localStorage.getItem('accessToken');
-      if (isMounted.current) setAccessToken(newToken);
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('authSuccess', handleAuthSuccess);
+    window.addEventListener("basketUpdated", handleBasketUpdate);
 
     return () => {
-      isMounted.current = false;
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('authSuccess', handleAuthSuccess);
+      window.removeEventListener("basketUpdated", handleBasketUpdate);
     };
   }, []);
-
-  // Загружаем корзину при изменении токена
-  useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      if (!initialLoadDone.current || accessToken) {
-        loadBasket();
-        initialLoadDone.current = true;
-      }
-    } else {
-      if (isMounted.current) setBasketItems([]);
-      initialLoadDone.current = false;
-    }
-  }, [accessToken, loadBasket]);
 
   return {
     basketItems,
     loading,
     selectedMap,
-    addToBasket,
     removeFromBasket,
     updateQuantity,
     updateSelected,
     handleOrder,
     getTotalSum,
-    loadBasket,
+    refreshBasket: fetchBasket,
   };
 };

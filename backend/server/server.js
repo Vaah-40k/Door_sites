@@ -5,7 +5,7 @@ const fs = require("fs");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const dotenv = require("dotenv").config({
-  path: path.join(__dirname, "..", "..", "./env"),
+  path: path.join(__dirname, "..", "..", ".env"),
 });
 //sadadasdadasdsdasdad
 app.use(cors());
