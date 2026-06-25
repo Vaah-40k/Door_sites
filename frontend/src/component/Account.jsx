@@ -7,6 +7,7 @@ const Account = () => {
   const token = localStorage.getItem("accessToken");
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("profile");
+  const [message, setMessage] = useState(" ");
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -382,6 +383,8 @@ const Account = () => {
     );
   }
 
+  const qwe = true;
+
   return (
     <div className="account">
       <div className="account-container">
@@ -396,26 +399,41 @@ const Account = () => {
           </div>
 
           <nav className="account-nav">
-            <button
-              className={activeTab === "profile" ? "active" : ""}
-              onClick={() => setActiveTab("profile")}
-            >
-              👤 Профиль
-            </button>
-            <button
-              className={activeTab === "orders" ? "active" : ""}
-              onClick={() => setActiveTab("orders")}
-            >
-              📦 Мои заказы
-              <span className="badge">{orders.length}</span>
-            </button>
-            <button
-              className={activeTab === "favorites" ? "active" : ""}
-              onClick={() => setActiveTab("favorites")}
-            >
-              ❤️ Избранное
-              <span className="badge">{favorites.length}</span>
-            </button>
+            {/* Кнопки отображаются только если qwe === false */}
+            {qwe === false ? (
+              <>
+                <button
+                  className={activeTab === "profile" ? "active" : ""}
+                  onClick={() => setActiveTab("profile")}
+                >
+                  👤 Профиль
+                </button>
+                <button
+                  className={activeTab === "orders" ? "active" : ""}
+                  onClick={() => setActiveTab("orders")}
+                >
+                  📦 Мои заказы
+                  <span className="badge">{orders.length}</span>
+                </button>
+                <button
+                  className={activeTab === "favorites" ? "active" : ""}
+                  onClick={() => setActiveTab("favorites")}
+                >
+                  ❤️ Избранное
+                  <span className="badge">{favorites.length}</span>
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  className={activeTab === "favorites" ? "active" : ""}
+                  onClick={() => setActiveTab("favorites")}
+                >
+                  ❤️ Сообщения
+                  <span className="badge">{favorites.length}</span>
+                </button>{" "}
+              </>
+            )}
             <button className="logout-btn" onClick={handleLogout}>
               🚪 Выйти
             </button>

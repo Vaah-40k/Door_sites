@@ -1036,3 +1036,36 @@
     grid-template-columns: 1fr;
   }
 }
+
+.ModalMessage {
+  display: none;
+  background-color: antiquewhite;
+  height: 20vh;
+  width: 15vw;
+
+  border: #000000 solid 1px;
+}
+.showMessageAll {
+  border: #000000 solid 1px;
+  height: 70%;
+}
+.writeMessage {
+  width: 100%;
+}
+.circleModal {
+  width: 100px;
+  height: 100px;
+  border-radius: 100%;
+  background-color: #33cccc;
+}
+.Modal {
+  position: absolute;
+  top: 70vh;
+  right: 5vw;
+}
+.active {
+  display: block;
+}
+.noActive {
+  display: none;
+}

@@ -156,17 +156,18 @@ app.post("/refresh-token", async (req, res) => {
 
 app.post(
   "/send-message-user-to-administrator",
-  TokenVerifier.protect(),
+  // TokenVerifier.protect(),
   (req, res) => {
+    const userID = jwt.decode(
+      req.headers.authorization.split(" ")[1],
+      process.env.JWTSECRETKEYACCESS,
+    ).id_user;
+    console.log(userID);
     try {
-      const userID = jwt.verify(
-        req.headers.authorization.split(" ")[1],
-        process.env.JWTSECRETKEYACCESS,
-      ).id_user;
       messageUser.create({
         ID_User: userID,
         message: req.body.textUser,
-        status: "unread",
+        status: "непрочитан",
       });
       console.log("Пользователь написал новое сообщение ");
       res.status(200).json({
@@ -180,22 +181,27 @@ app.post(
   },
 );
 
-app.post("/show-all-message-user", async (req, res) => {
+app.get("/show-all-message-user", async (req, res) => {
   try {
-    const allMessage = await messageUser.findAll({});
-    let alldata = [];
-    let idUser = [];
-    for (let i = 0; i < allMessage.length; ++i) {
-      alldata[i] = allMessage[i].dataValues;
-    }
-    for (let i = 0; i < alldata.length; ++i) {
-      if (!idUser.includes(alldata[i].ID_User)) {
-        idUser.push(alldata[i].ID_User);
-      }
-    }
+    const userID = jwt.decode(
+      req.headers.authorization.split(" ")[1],
+      process.env.JWTSECRETKEYACCESS,
+    ).id_user;
+
+    const allMessageSequelize = await messageUser.findAll({
+      where: {
+        ID_User: userID,
+      },
+    });
+    const allMessage = allMessageSequelize.map((dataValues) =>
+      dataValues.get({ plain: true }),
+    );
+    const data = JSON.stringify(allMessage);
+
     res.status(200).json({
       seccess: true,
       message: "Выведенны сообщения пользователя",
+      allMessage,
     });
   } catch (err) {
     console.log("Произошла ошибка отображения сообщений пользоватлей - ", err);

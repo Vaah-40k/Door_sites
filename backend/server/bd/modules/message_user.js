@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 module.exports = function (sequelize) {
   return sequelize.define(
-    "messageUser",
+    "messageuser",
     {
       ID_message: {
         primaryKey: true,
@@ -25,7 +25,7 @@ module.exports = function (sequelize) {
       },
     },
     {
-      tableName: "messageUser",
+      tableName: "messageuser",
     },
   );
 };
