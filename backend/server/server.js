@@ -225,7 +225,6 @@ app.post("/basket/add", TokenVerifier.protect(), async (req, res) => {
   try {
     const userId = req.user.id_user; // из токена
     const { id_tovar, quantity = 1 } = req.body;
-    console.log(id_tovar);
     if (!id_tovar) {
       return res
         .status(400)
@@ -472,11 +471,19 @@ app.delete("/application-destroy/:id_application", async (req, res) => {
 
 // Выход
 app.post("/logout", (req, res) => {
-  console.log("сделай нормальный выход");
   res.json({ success: true, message: "Выход выполнен" });
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Сервер запущен на порту ${PORT}`);
-});
+
+const server = app
+  .listen(PORT, () => {
+    console.log(`Сервер успешно запущен на порту ${PORT}`);
+  })
+  .on("error", (err) => {
+    if (err.code === "EADDRINUSE") {
+      console.error("Ошибка: порт уже используется");
+    } else {
+      console.error("Ошибка при запуске сервера:", err);
+    }
+  });

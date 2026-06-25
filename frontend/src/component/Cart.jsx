@@ -1,8 +1,10 @@
+// Cart.jsx
 import { useLocation } from "react-router-dom";
 import { useState } from "react";
+import { useBasket } from "../hooks/useBasket";
 import "../styles/cart.css";
 
-// Пример дополнительных товаров для демонстрации
+// Пример дополнительных товаров для демонстрации (без изменений)
 const sampleProducts = [
   {
     id: 1,
@@ -37,22 +39,37 @@ const Cart = () => {
   const location = useLocation();
   const product = location.state?.product;
   const [addedToCart, setAddedToCart] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
+  const { addToBasket } = useBasket();
 
   const handleAddToBasket = async () => {
-    // Имитация добавления в корзину
-    setAddedToCart(true);
-    alert("Товар добавлен в корзину");
+    if (!product || !product.id_tovar) {
+      alert("Ошибка: идентификатор товара не найден");
+      return;
+    }
 
-    // Обновляем корзину через событие
-    window.dispatchEvent(new Event("basketUpdated"));
+    setIsAdding(true);
+    try {
+      await addToBasket(product.id_tovar);
+      setAddedToCart(true);
+      alert("Товар добавлен в корзину");
 
-    // Перенаправляем в корзину через 1.5 секунды
-    setTimeout(() => {
-      window.location.href = "/basket";
-    }, 1500);
+      // Обновляем корзину через событие (уже вызывается внутри addToBasket)
+      // Перенаправляем в корзину через 1.5 секунды
+      setTimeout(() => {
+        window.location.href = "/basket";
+      }, 1500);
+    } catch (error) {
+      console.error("Ошибка добавления в корзину:", error);
+      alert(
+        "Не удалось добавить товар в корзину. Возможно, вы не авторизованы.",
+      );
+    } finally {
+      setIsAdding(false);
+    }
   };
 
-  // Если товар не передан, показываем примеры товаров
+  // Если товар не передан, показываем примеры товаров (без изменений)
   if (!product) {
     return (
       <div className="cart">
@@ -103,17 +120,26 @@ const Cart = () => {
           <div className="cart-btn1">
             <button
               onClick={handleAddToBasket}
-              disabled={addedToCart}
+              disabled={addedToCart || isAdding}
               style={
-                addedToCart ? { background: "#33cccc", cursor: "default" } : {}
+                addedToCart
+                  ? { background: "#33cccc", cursor: "default" }
+                  : isAdding
+                    ? { background: "#ffaa33", cursor: "wait" }
+                    : {}
               }
             >
-              {addedToCart ? "✓ Добавлено" : "Добавить в корзину"}
+              {addedToCart
+                ? "✓ Добавлено"
+                : isAdding
+                  ? "Добавление..."
+                  : "Добавить в корзину"}
             </button>
           </div>
         </div>
       </div>
 
+      {/* Стили (без изменений) */}
       <style jsx>{`
         .sample-products {
           display: grid;

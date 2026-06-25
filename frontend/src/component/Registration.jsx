@@ -64,7 +64,7 @@ class Registration extends React.Component {
         }
 
         this.setState({
-          registrationMessage: `Регистрация успешна! Ваш ID: ${data.id_user}`,
+          registrationMessage: `Регистрация успешна!`,
           messageType: "success",
           registrationData: {
             first_name: "",

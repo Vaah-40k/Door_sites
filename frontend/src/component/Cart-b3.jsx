@@ -13,6 +13,7 @@ const Cart_b3 = ({ filters, addToBasket }) => {
 
   const handleAddToBasket = (productId) => {
     if (addToBasket) {
+      alert("Товар добавлен в корзину");
       addToBasket(productId);
     } else {
       console.warn("addToBasket функция не передана");
@@ -89,7 +90,7 @@ const Cart_b3 = ({ filters, addToBasket }) => {
             sortedProducts.map((product) => (
               <div
                 key={product.id_tovar}
-                className={`cart-item cart${product.id_tovar}`}
+                className={`cart-item cart-${product.id_tovar}`}
               >
                 <div className="cart-image">
                   <img src={product.image} alt={product.alt} />

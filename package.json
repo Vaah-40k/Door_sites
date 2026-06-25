@@ -6,6 +6,11 @@
     "dev:backend": "dotenv -- node backend/server/server.js",
     "dev:frontend": "dotenv -- sh -c 'cd frontend && npm run dev'",
     "xam": "sh -c 'cd ../../../../ && cd opt/lampp && sudo ./lampp start'",
+    "xam:fix": "sudo systemctl stop mysql",
+    "xam:status": "sh -c 'cd ../../../../ && cd opt/lampp && sudo ./lampp status'",
+    "xam:stop": "sh -c 'cd ../../../../ && cd opt/lampp && sudo ./lampp stop'",
+    "frontend:fix": " chmod +x node_modules/.bin/vite",
+    "backend:fix": " chmod +x node_modules/.bin/dotenv",
     "dev": " npm run dev:frontend & npm run dev:backend",
     "google": "xdg-open http://localhost:5173/ &&  xdg-open http://localhost/phpmyadmin/ && xdg-open http://localhost:3500/ && xdg-open  https://chat.deepseek.com/ &&  xdg-open https://translate.yandex.ru/translator/%D0%90%D0%BD%D0%B3%D0%BB%D0%B8%D0%B9%D1%81%D0%BA%D0%B8%D0%B9-%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9"
   }

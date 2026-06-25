@@ -40,9 +40,7 @@ const Autorization = () => {
         localStorage.setItem("refreshToken", refreshToken);
         window.dispatchEvent(new Event("authSuccess"));
 
-        setAuthMessage(
-          `Добро пожаловать, ${data.user?.first_name || data.user?.email || "пользователь"}!`,
-        );
+        setAuthMessage(`Добро пожаловать дорогой клиент`);
         setMessageType("success");
         setAuthData({ email: "", password: "" });
       } else {
