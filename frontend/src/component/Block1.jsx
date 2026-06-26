@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import imgb1 from "../assets/hBDAKS.jpg";
 const Block1 = () => {
   const navigate = useNavigate();
   const handleCatalogClick = (e) => {
@@ -22,7 +23,7 @@ const Block1 = () => {
           </div>
         </div>
         <div className="b1-img">
-          <img src="#" alt="#" />
+          <img src={imgb1}></img>
         </div>
       </div>
     </div>

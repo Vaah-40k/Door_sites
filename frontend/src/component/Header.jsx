@@ -1,3 +1,4 @@
+import Logoimg from "../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 
 const Header = () => {
@@ -24,7 +25,7 @@ const Header = () => {
   return (
     <div className="header">
       <div className="logo">
-        <h2>Магазин дверей</h2>
+        <img src={Logoimg}></img>
       </div>
       <div className="nav-head">
         <a

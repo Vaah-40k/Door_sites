@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import "../styles/account.css";
 
 const Account = () => {
+  console.log(import.meta.env.VITE_BASE_URL_BACKEND);
+
   const token = localStorage.getItem("accessToken");
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("profile");
@@ -163,7 +165,6 @@ const Account = () => {
       setLoading(false);
       return;
     }
-
     try {
       const response = await fetch(
         `${import.meta.env.VITE_BASE_URL_BACKEND}/profile`,
@@ -383,7 +384,7 @@ const Account = () => {
     );
   }
 
-  const qwe = true;
+  const qwe = false;
 
   return (
     <div className="account">

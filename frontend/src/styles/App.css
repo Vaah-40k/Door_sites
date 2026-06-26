@@ -8,54 +8,111 @@
 }
 /* Шапка */
 .header {
-  display: flex;
+  height: 10vh;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  align-items: center;
   font-family: "AdventPro-Bold";
 }
+
+.logo {
+  height: 10vh;
+  width: 70%;
+}
+.logo img {
+  height: 100%;
+  width: 100%;
+}
+
+.nav-head {
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  flex: 1;
+}
+
 .nav-head a {
   text-decoration: none;
   color: black;
-  padding-right: 8%;
   font-size: 1em;
-  margin-left: -5%;
-  transition: background-color 0.3s ease;
+  transition: color 0.3s ease;
+  white-space: nowrap;
+  padding-right: 2%;
 }
+
 .nav-head a:hover {
-  color: #ff5f2f; /* Цвет при наведении */
+  color: #ff5f2f;
 }
-.nav-head {
-  margin-top: 2.2%;
-  margin-left: 30%;
-  width: 30%;
-}
+
 .header-btn {
-  font-family: "AdventPro-Bold";
-  padding-top: 1.5%;
-  margin-left: 16.2%;
+  flex-shrink: 0;
+  margin-left: auto;
 }
+
 .header-btn button {
   border: none;
   background-color: #ff5f2f;
   color: rgb(255, 255, 255);
-  width: 300%;
-  padding-bottom: 20%;
-  padding-top: 20%;
+  padding: 10px 35px;
   font-family: "AdventPro-Bold";
-  font-size: 1em;
+  font-size: 1.2em;
   cursor: pointer;
+  white-space: nowrap;
+  border-radius: 8px;
 }
+
 .header-btn button:hover {
   background-color: #e04e22;
 }
+
+/* Адаптив для маленьких экранов */
+@media (max-width: 1024px) {
+  .header {
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+
+  .nav-head {
+    gap: 15px;
+    margin-left: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .logo {
+    justify-content: center;
+  }
+
+  .nav-head {
+    justify-content: center;
+    margin-left: 0;
+    flex-wrap: wrap;
+  }
+
+  .header-btn {
+    margin-left: 0;
+    text-align: center;
+  }
+}
 /* Главная блок 1 */
 .content-block1 {
-  display: flex;
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
   background-color: #33cccc;
   margin-top: 2%;
   padding-bottom: 2%;
 }
 .text-b1 {
   color: rgb(255, 255, 255);
-  margin-left: 3%;
+  margin-left: 5%;
 }
 .text-b1 h1 {
   font-family: "AdventPro-Bold";
@@ -65,20 +122,24 @@
   font-family: "AdventPro-Regular";
   font-size: 1.5em;
 }
+.b1-img img {
+  width: 100%;
+  height: 100%;
+}
 .b1-img {
   position: absolute;
-  z-index: 2;
-  background-color: rgb(119, 119, 119);
-  margin-left: 45%;
-  width: 35%;
-  height: 52.5%;
+  top: 0;
+  right: 0;
+  width: 45%;
+  height: 100%;
 }
 .btn-b1 button {
   border: none;
   background-color: #ff5f2f;
   color: rgb(255, 255, 255);
   font-family: "AdventPro-Bold";
-  width: 40%;
+  width: 30%;
+  border-radius: 8px;
   text-align: start;
   padding: 2% 2% 2% 2%;
   font-size: 1em;
@@ -234,6 +295,7 @@
   display: flex;
 }
 .b3-btn button {
+  border-radius: 8px;
   border: none;
   background-color: #ff5f2f;
   color: rgb(255, 255, 255);
@@ -255,13 +317,9 @@
   display: flex;
 }
 .about-img img {
-  width: 40%;
-}
-.about-img {
-  margin-left: 38%;
-  background-color: rgb(115, 115, 115);
-  width: 50%;
-  padding-bottom: 50%;
+  margin-left: 43%;
+  width: 70%;
+  padding-bottom: 10%;
 }
 .about-block {
   margin-top: 5%;
@@ -1036,32 +1094,292 @@
     grid-template-columns: 1fr;
   }
 }
+/* ===== КНОПКА-ТРИГГЕР (иконка чата) ===== */
+.chat-trigger {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #33cccc;
+  color: white;
+  border: none;
+  box-shadow: 0 4px 20px rgba(51, 204, 204, 0.4);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
 
-.ModalMessage {
-  display: none;
-  background-color: antiquewhite;
-  height: 20vh;
-  width: 15vw;
+.chat-trigger:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 30px rgba(51, 204, 204, 0.6);
+  background: #2ba0a0;
+}
 
-  border: #000000 solid 1px;
+.chat-trigger:active {
+  transform: scale(0.95);
 }
-.showMessageAll {
-  border: #000000 solid 1px;
-  height: 70%;
-}
-.writeMessage {
-  width: 100%;
-}
-.circleModal {
-  width: 100px;
-  height: 100px;
-  border-radius: 100%;
-  background-color: #33cccc;
-}
-.Modal {
+
+/* Бейдж с количеством непрочитанных */
+.chat-badge {
   position: absolute;
-  top: 70vh;
-  right: 5vw;
+  top: -5px;
+  right: -5px;
+  background: #ff5f2f;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+  font-family: "AdventPro-Bold", sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(255, 95, 47, 0.3);
+}
+
+/* ===== ВИДЖЕТ (обёртка для модалки) ===== */
+.chat-widget {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 1001;
+  width: 380px;
+  max-width: calc(100vw - 40px);
+  animation: slideUpWidget 0.3s ease;
+}
+
+@keyframes slideUpWidget {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ===== МОДАЛЬНОЕ ОКНО ===== */
+.chat-modal {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #f0f0f0;
+}
+
+/* ===== ЗАГОЛОВОК ===== */
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 2px solid #f0f0f0;
+  background: white;
+}
+
+.chat-header h3 {
+  font-family: "AdventPro-Bold", sans-serif;
+  font-size: 1.2em;
+  color: #000;
+  margin: 0;
+}
+
+.chat-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #999;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+
+.chat-close:hover {
+  color: #ff5f2f;
+  background: #fff0eb;
+}
+
+/* ===== ОБЛАСТЬ СООБЩЕНИЙ ===== */
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+  background: #fafafa;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 200px;
+  max-height: 350px;
+}
+
+.chat-empty {
+  text-align: center;
+  padding: 40px 0;
+  color: #999;
+}
+
+.chat-empty p {
+  font-family: "AdventPro-Bold", sans-serif;
+  font-size: 1.1em;
+  margin: 0 0 8px;
+}
+
+.chat-empty span {
+  font-family: "AdventPro-Regular", sans-serif;
+  font-size: 0.9em;
+}
+
+/* ===== ОДНО СООБЩЕНИЕ ===== */
+.chat-message {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.message-bubble {
+  background: white;
+  padding: 10px 14px;
+  border-radius: 16px 16px 16px 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  max-width: 85%;
+  word-wrap: break-word;
+  border: 1px solid #f0f0f0;
+}
+
+.message-bubble p {
+  font-family: "AdventPro-Regular", sans-serif;
+  font-size: 0.9em;
+  color: #333;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.message-time {
+  font-family: "AdventPro-Regular", sans-serif;
+  font-size: 0.65em;
+  color: #aaa;
+  margin-top: 4px;
+  padding-left: 8px;
+}
+
+/* ===== ПОЛЕ ВВОДА ===== */
+.chat-input-area {
+  display: flex;
+  padding: 12px 16px;
+  border-top: 2px solid #f0f0f0;
+  background: white;
+  gap: 10px;
+}
+
+.chat-input {
+  flex: 1;
+  padding: 8px 14px;
+  border: 2px solid #e0e0e0;
+  border-radius: 30px;
+  font-family: "AdventPro-Regular", sans-serif;
+  font-size: 0.9em;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.chat-input:focus {
+  border-color: #33cccc;
+  box-shadow: 0 0 0 4px rgba(51, 204, 204, 0.15);
+}
+
+.chat-input::placeholder {
+  color: #bbb;
+}
+
+.chat-send-btn {
+  background: #ff5f2f;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.chat-send-btn:hover {
+  background: #e04e22;
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(255, 95, 47, 0.3);
+}
+
+.chat-send-btn:active {
+  transform: scale(0.95);
+}
+
+/* ===== АДАПТИВНОСТЬ ===== */
+@media (max-width: 768px) {
+  .chat-trigger {
+    bottom: 20px;
+    right: 20px;
+    width: 54px;
+    height: 54px;
+  }
+
+  .chat-widget {
+    bottom: 85px;
+    right: 20px;
+    width: 340px;
+    max-width: calc(100vw - 40px);
+  }
+}
+
+@media (max-width: 480px) {
+  .chat-trigger {
+    bottom: 16px;
+    right: 16px;
+    width: 48px;
+    height: 48px;
+  }
+
+  .chat-widget {
+    bottom: 72px;
+    right: 10px;
+    width: calc(100vw - 20px);
+    max-width: 100%;
+  }
+
+  .chat-modal {
+    border-radius: 16px;
+  }
+
+  .chat-header {
+    padding: 12px 16px;
+  }
+
+  .chat-messages {
+    padding: 12px 14px;
+    min-height: 150px;
+    max-height: 250px;
+  }
+
+  .chat-input-area {
+    padding: 10px 14px;
+    gap: 8px;
+  }
+
+  .chat-send-btn {
+    width: 40px;
+    height: 40px;
+  }
 }
 .active {
   display: block;

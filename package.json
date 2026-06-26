@@ -1,17 +1,20 @@
 {
-  "devDependencies": {
-    "dotenv-cli": "^11.0.0"
-  },
   "scripts": {
     "dev:backend": "dotenv -- node backend/server/server.js",
     "dev:frontend": "dotenv -- sh -c 'cd frontend && npm run dev'",
-    "xam": "sh -c 'cd ../../../../ && cd opt/lampp && sudo ./lampp start'",
-    "xam:fix": "sudo systemctl stop mysql",
-    "xam:status": "sh -c 'cd ../../../../ && cd opt/lampp && sudo ./lampp status'",
-    "xam:stop": "sh -c 'cd ../../../../ && cd opt/lampp && sudo ./lampp stop'",
-    "frontend:fix": " chmod +x node_modules/.bin/vite",
-    "backend:fix": " chmod +x node_modules/.bin/dotenv",
+    "xam": "sh -c 'cd ../../../../../ && cd opt/lampp && sudo ./lampp start'",
     "dev": " npm run dev:frontend & npm run dev:backend",
-    "google": "xdg-open http://localhost:5173/ &&  xdg-open http://localhost/phpmyadmin/ && xdg-open http://localhost:3500/ && xdg-open  https://chat.deepseek.com/ &&  xdg-open https://translate.yandex.ru/translator/%D0%90%D0%BD%D0%B3%D0%BB%D0%B8%D0%B9%D1%81%D0%BA%D0%B8%D0%B9-%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9"
+    "xam:fix": "sudo systemctl stop mysql",
+    "xam:status": "sh -c 'cd ../../../../../ && cd opt/lampp && sudo ./lampp status'",
+    "xam:stop": "sh -c 'cd ../../../../../ && cd opt/lampp && sudo ./lampp stop'",
+    "google": "xdg-open http://localhost:5173/ &&  xdg-open http://localhost/phpmyadmin/ && xdg-open http://localhost:3500/ && xdg-open  https://chat.deepseek.com/ &&  xdg-open https://translate.yandex.ru/translator/%D0%90%D0%BD%D0%B3%D0%BB%D0%B8%D0%B9%D1%81%D0%BA%D0%B8%D0%B9-%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9",
+    "dev:backend_kira": "dotenv -- node backend/server/server.js",
+    "dev:frontend_kira": "dotenv -- cmd /c \"cd frontend && npm run dev\"",
+    "xam_kira": "cmd /c \"cd /d C:\\xampp && xampp_start.exe\"",
+    "dev_kira": "start cmd /c \"npm run dev:frontend\" && start cmd /c \"npm run dev:backend\"",
+    "google_kira": "start http://localhost:5173/ && start http://localhost/phpmyadmin/ && start http://localhost:3500/ && start https://chat.deepseek.com/ && start https://translate.yandex.ru/translator/%D0%90%D0%BD%D0%B3%D0%BB%D0%B8%D0%B9%D1%81%D0%BA%D0%B8%D0%B9-%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9"
+  },
+  "devDependencies": {
+    "dotenv-cli": "^11.0.0"
   }
 }

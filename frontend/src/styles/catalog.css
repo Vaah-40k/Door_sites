@@ -1,31 +1,33 @@
-/* catalog.css */
 .catalog {
-  width: 100%;
-  box-sizing: border-box;
+  max-width: 1200px;
+  margin: 40px auto;
   font-family: "AdventPro-Regular", sans-serif;
 }
 
 .catalog-content {
   display: flex;
-  gap: 30px;
-  max-width: 1400px;
-  margin: 0 auto;
+  min-height: 400px;
 }
 
-/* Фильтр слева */
+/* ===== ФИЛЬТР ===== */
 .filter {
-  flex: 0 0 300px;
-  background-color: #33cccc;
+  flex: 0 0 280px;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 2px solid #33cccc;
   padding: 25px;
-  margin-top: 4%;
-  margin-bottom: 6%;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.219);
+  height: fit-content;
+  position: sticky;
+  top: 20px;
 }
 
 .filter-content h1 {
-  font-size: 28px;
-  color: #ffffff;
-  font-weight: 600;
+  font-family: "AdventPro-Bold", sans-serif;
+  font-size: 1.8em;
+  color: #000;
+  margin: 0 0 25px 0;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #ff5f2f;
 }
 
 .filter-group {
@@ -34,132 +36,445 @@
 
 .filter-group label {
   display: block;
-  margin-bottom: 8px;
-  color: #ffffff;
-  font-weight: 500;
-  font-size: 14px;
+  font-family: "AdventPro-Regular", sans-serif;
+  font-size: 0.95em;
+  color: #666;
+  margin-bottom: 6px;
 }
 
 .filter-input {
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #ddd;
+  padding: 10px 14px;
+  border: 1px solid #ff5f2f;
   border-radius: 8px;
-  font-size: 14px;
-  font-family: inherit;
-  transition: all 0.3s ease;
+  font-family: "AdventPro-Regular", sans-serif;
+  font-size: 0.95em;
+  transition: border-color 0.3s ease;
   box-sizing: border-box;
+  background: #fafafa;
 }
 
 .filter-input:focus {
   outline: none;
-  border-color: #ff5f2f;
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-}
-
-.filter-input:hover {
-  border-color: #3498db;
+  border-color: #33cccc;
+  background: white;
 }
 
 .reset-btn {
   width: 100%;
-  padding: 10px;
-  background: #ff5f2f;
-  color: white;
-  border: none;
-  font-size: 16px;
-  font-family: inherit;
+  padding: 12px;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-family: "AdventPro-Bold", sans-serif;
+  font-size: 0.95em;
+  color: #666;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-top: 10px;
-  font-weight: 500;
 }
 
 .reset-btn:hover {
-  background: #bb421e;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+  background: #33cccc;
+  border-color: #33cccc;
+  color: white;
 }
 
-.reset-btn:active {
-  transform: translateY(0);
-}
-
-/* Карточки справа */
+/* ===== СЕТКА КАРТОЧЕК ===== */
 .cart {
   flex: 1;
-  min-width: 0;
+  margin-top: -10%;
 }
 
-.block3 {
-  width: 100%;
-}
-
-.offer-content {
-  width: 100%;
-}
-
-.carts-header {
-  margin-bottom: 20px;
-  margin-top: -5%;
-}
-
-.products-count {
-  font-size: 16px;
-  color: #5d5d5d;
-  font-weight: 500;
-}
-
-.carts {
+.catalog-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 25px;
+  gap: 30px;
 }
 
-.cart-description {
-  font-size: 14px;
-  color: #6b6b6b;
-  margin: 0 0 12px 0;
+/* ===== КАРТОЧКА ТОВАРА (аналогична basket-card) ===== */
+.catalog-card {
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid #f0f0f0;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
-.cart-btn {
+.catalog-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  border-color: #e0e0e0;
+}
+
+/* ===== ИЗОБРАЖЕНИЕ (аналогично basket-card-image) ===== */
+.catalog-card-image {
+  position: relative;
   width: 100%;
-  padding: 8px;
-  background: #ff5f2f;
-  color: white;
+  height: 250px;
+  overflow: hidden;
+  background: #f5f5f5;
+}
+
+.catalog-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+  display: block;
+}
+
+.catalog-card:hover .catalog-card-image img {
+  transform: scale(1.03);
+}
+
+/* ===== КНОПКА СЕРДЕЧКО (вместо крестика) ===== */
+.catalog-favorite-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
   border: none;
-  font-size: 14px;
-  font-family: inherit;
+  background: rgba(255, 255, 255, 0.9);
+  color: #ccc;
+  font-size: 18px;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: all 0.3s ease;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.cart-btn:hover {
-  background: #bb421e;
+.catalog-favorite-btn:hover {
+  color: #ff5f2f;
+  background: #fff0eb;
+  transform: scale(1.1);
 }
 
-/* Сообщение об отсутствии товаров */
-.no-products {
-  grid-column: 1 / -1;
-  text-align: center;
-  padding: 60px 20px;
-  background: #f8f9fa;
+.catalog-favorite-btn.active {
+  color: #ff5f2f;
+  background: #fff0eb;
+}
+
+/* ===== ИНФОРМАЦИЯ О ТОВАРЕ (аналогично basket-card-info) ===== */
+.catalog-card-info {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.catalog-card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.catalog-card-title strong {
+  font-family: "AdventPro-Bold", sans-serif;
+  font-size: 1.1em;
+  color: #000;
+}
+
+.catalog-item-size {
+  font-family: "AdventPro-Regular", sans-serif;
+  font-size: 0.85em;
+  color: #999;
+  padding: 2px 12px;
+  background: #f5f5f5;
   border-radius: 12px;
 }
 
-.no-products p:first-child {
-  font-size: 24px;
-  color: #ffffff;
-  margin-bottom: 10px;
+.catalog-card-price {
+  margin: 5px 0;
+}
+
+.catalog-item-price {
+  font-family: "AdventPro-Bold", sans-serif;
+  font-size: 1.4em;
+  color: #ff5f2f;
+}
+
+/* ===== МАТЕРИАЛ ===== */
+.catalog-card-material {
+  font-family: "AdventPro-Regular", sans-serif;
+  font-size: 0.9em;
+  color: #666;
+  margin: -5px 0 5px;
+}
+
+.catalog-card-material span {
+  background: #f5f5f5;
+  padding: 2px 10px;
+  border-radius: 4px;
+}
+
+/* ===== ДЕЙСТВИЯ С КАРТОЧКОЙ ===== */
+.catalog-card-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin-top: 5px;
+}
+
+/* ===== КНОПКА "ДОБАВИТЬ В КОРЗИНУ" ===== */
+.catalog-add-btn {
+  flex: 1;
+  padding: 10px 16px;
+  background: #ff5f2f;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-family: "AdventPro-Bold", sans-serif;
+  font-size: 0.95em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.catalog-add-btn:hover:not(:disabled) {
+  background: #e04e22;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255, 95, 47, 0.3);
+}
+
+.catalog-add-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.catalog-add-btn.added {
+  background: #33cccc;
+}
+
+.catalog-add-btn.added:hover {
+  background: #2bb8b8;
+}
+
+/* ===== КНОПКА "ОФОРМИТЬ ЗАКАЗ" ===== */
+.catalog-order-btn {
+  padding: 10px 20px;
+  background: #33cccc;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-family: "AdventPro-Bold", sans-serif;
+  font-size: 0.95em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.catalog-order-btn:hover {
+  background: #2ba0a0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(51, 204, 204, 0.3);
+}
+
+/* ===== СТИЛИ ДЛЯ КОМПОНЕНТА Cart-b3 ===== */
+/* Стили для блока offers */
+.offers {
+  margin-top: 5%;
+}
+
+/* Стили для контейнера с товарами */
+.carts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 30px;
+  margin-top: 30px;
+}
+
+/* Карточка товара в Cart-b3 */
+.cart-item {
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid #f0f0f0;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.cart-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  border-color: #e0e0e0;
+}
+
+/* Изображение товара */
+.cart-item .cart-image {
+  position: relative;
+  width: 100%;
+  height: 250px;
+  overflow: hidden;
+  background: #f5f5f5;
+}
+
+.cart-item .cart-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+  display: block;
+}
+
+.cart-item:hover .cart-image img {
+  transform: scale(1.03);
+}
+
+/* Информация о товаре */
+.cart-item .cart-info {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cart-item .cart-title {
+  font-family: "AdventPro-Bold", sans-serif;
+  font-size: 1.1em;
+  color: #000;
+  margin: 0;
+}
+
+.cart-item .cart-price {
+  font-family: "AdventPro-Bold", sans-serif;
+  font-size: 1.4em;
+  color: #ff5f2f;
+  margin: 0;
+}
+
+.cart-item .cart-description {
+  font-family: "AdventPro-Regular", sans-serif;
+  font-size: 0.85em;
+  color: #999;
+  margin: 0;
+  padding: 2px 12px;
+  background: #f5f5f5;
+  border-radius: 12px;
+  display: inline-block;
+  width: fit-content;
+}
+
+/* Количество товаров */
+.products-count {
+  font-family: "AdventPro-Regular", sans-serif;
+  font-size: 1em;
+  color: #999;
+  margin-bottom: 20px;
+  margin-top: -10%;
+}
+
+/* ===== КНОПКИ В КОМПОНЕНТЕ Cart-b3 ===== */
+/* Кнопка "Оформить заказ" */
+.cart-item .cart-btn {
+  padding: 10px 16px;
+  background: #33cccc;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-family: "AdventPro-Bold", sans-serif;
+  font-size: 0.95em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.cart-item .cart-btn:hover {
+  background: #2ba0a0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(51, 204, 204, 0.3);
+}
+
+/* Кнопка "В корзину" (без класса) */
+.cart-item .cart-info button:not(.cart-btn) {
+  padding: 10px 16px;
+  background: #ff5f2f;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-family: "AdventPro-Bold", sans-serif;
+  font-size: 0.95em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.cart-item .cart-info button:not(.cart-btn):hover {
+  background: #e04e22;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255, 95, 47, 0.3);
+}
+
+/* Если кнопки идут в ряд */
+.cart-item .cart-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Пустой каталог */
+.no-products {
+  text-align: center;
+  padding: 60px 20px;
+  grid-column: 1 / -1;
+}
+
+.no-products p {
+  font-family: "AdventPro-Regular", sans-serif;
+  font-size: 1.2em;
+  color: #999;
+  margin: 0;
 }
 
 .no-products-hint {
-  color: #ffffff;
-  font-size: 14px;
+  font-size: 0.9em !important;
+  color: #bbb !important;
+  margin-top: 10px !important;
 }
 
-/* Адаптивность */
-@media (max-width: 768px) {
+/* ===== ЗАГРУЗКА ===== */
+.catalog-loading {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.catalog-loading p {
+  font-family: "AdventPro-Regular", sans-serif;
+  color: #999;
+  margin-bottom: 20px;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 15px;
+  border: 4px solid #f0f0f0;
+  border-top-color: #33cccc;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===== АДАПТИВНОСТЬ ===== */
+@media (max-width: 1024px) {
+  .carts {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 25px;
+  }
+}
+
+@media (max-width: 992px) {
   .catalog-content {
     flex-direction: column;
   }
@@ -168,21 +483,108 @@
     flex: none;
     width: 100%;
     position: static;
-    top: 0;
+    padding: 20px;
+  }
+
+  .filter-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px 20px;
+    align-items: end;
+  }
+
+  .filter-content h1 {
+    grid-column: 1 / -1;
+    margin-bottom: 5px;
+    padding-bottom: 10px;
+    font-size: 1.5em;
+  }
+
+  .filter-group {
+    margin-bottom: 0;
+  }
+
+  .reset-btn {
+    height: 42px;
+    align-self: end;
+  }
+}
+
+@media (max-width: 768px) {
+  .catalog {
+    padding: 0 15px;
+    margin: 20px auto;
   }
 
   .carts {
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 15px;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
   }
 
-  .catalog {
-    padding: 15px;
+  .cart-item .cart-image {
+    height: 200px;
+  }
+
+  .filter-content {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .filter-content h1 {
+    font-size: 1.3em;
+  }
+
+  .cart-item .cart-info button:not(.cart-btn),
+  .cart-item .cart-btn {
+    font-size: 0.9em;
+    padding: 10px;
   }
 }
 
 @media (max-width: 480px) {
   .carts {
     grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .cart-item .cart-image {
+    height: 220px;
+  }
+
+  .cart-item .cart-title {
+    font-size: 1em;
+  }
+
+  .cart-item .cart-price {
+    font-size: 1.2em;
+  }
+
+  .filter {
+    padding: 15px;
+  }
+
+  .cart-item .cart-info button:not(.cart-btn),
+  .cart-item .cart-btn {
+    font-size: 0.85em;
+    padding: 8px;
+  }
+}
+
+/* ===== АНИМАЦИЯ ДОБАВЛЕНИЯ ===== */
+.cart-item.adding {
+  animation: addToCatalog 0.6s ease;
+}
+
+@keyframes addToCatalog {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
   }
 }

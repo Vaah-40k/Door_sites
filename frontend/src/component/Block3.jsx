@@ -58,11 +58,6 @@ const Block3 = () => {
                 <p className="cart-price">{product.price}</p>
                 <p className="cart-discription">{product.discription}</p>
               </div>
-              {/* Если хотите черную плашку при наведении, раскомментируйте этот блок и закомментируйте cart-info */}
-              {/* <div className="cart-overlay">
-                <p className="overlay-title">{product.title}</p>
-                <p className="overlay-price">{product.price}</p>
-              </div> */}
             </div>
           ))}
         </div>

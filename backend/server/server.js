@@ -9,7 +9,9 @@ const dotenv = require("dotenv").config({
 });
 //sadadasdadasdsdasdad
 app.use(cors());
-
+console.log(process.env.PORT);
+console.log(process.env.VITE_BASE_URL_BACKEND);
+console.log(process.env.JWTSECRETKEYACCESS);
 const registration = require("./service/registration");
 const authorizeUser = require("./service/autarization"); // исправлено имя
 const TokenVerifier = require("./service/JWT/verifyJWTToken");
