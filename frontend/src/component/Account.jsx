@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "../styles/account.css";
 
 const Account = () => {
-  console.log(import.meta.env.VITE_BASE_URL_BACKEND);
+  const administrationOrNot = true;
 
   const token = localStorage.getItem("accessToken");
   const navigate = useNavigate();
@@ -13,6 +13,8 @@ const Account = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [allMessagesForTheAdministrator, setAllMessagesForTheAdministrator] =
+    useState([]);
 
   // Состояния для профиля
   const [user, setUser] = useState({
@@ -206,10 +208,28 @@ const Account = () => {
       setLoading(false);
     }
   };
+  const loadMessageToAdministratior = async () => {
+    if (administrationOrNot) {
+      const response = await fetch(
+        `${import.meta.env.VITE_BASE_URL_BACKEND}/show-all-message-user`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      const data = await response.json();
+      console.log(data.groupData);
 
+      setAllMessagesForTheAdministrator(data.groupData);
+    }
+  };
   useEffect(() => {
     fetchProfile();
     loadOrders();
+    loadMessageToAdministratior();
   }, [token]);
 
   // Обработчики формы
@@ -384,8 +404,6 @@ const Account = () => {
     );
   }
 
-  const qwe = false;
-
   return (
     <div className="account">
       <div className="account-container">
@@ -400,8 +418,7 @@ const Account = () => {
           </div>
 
           <nav className="account-nav">
-            {/* Кнопки отображаются только если qwe === false */}
-            {qwe === false ? (
+            {administrationOrNot === false ? (
               <>
                 <button
                   className={activeTab === "profile" ? "active" : ""}
@@ -427,11 +444,15 @@ const Account = () => {
             ) : (
               <>
                 <button
-                  className={activeTab === "favorites" ? "active" : ""}
-                  onClick={() => setActiveTab("favorites")}
+                  className={
+                    activeTab === "allMessagesForTheAdministrator"
+                      ? "active"
+                      : ""
+                  }
+                  onClick={() => setActiveTab("allMessagesForTheAdministrator")}
                 >
                   ❤️ Сообщения
-                  <span className="badge">{favorites.length}</span>
+                  <span className="badge">{Object.keys(allMessagesForTheAdministrator).length}</span>
                 </button>{" "}
               </>
             )}
@@ -710,6 +731,57 @@ const Account = () => {
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+          {/* Сообщения от пользователей*/}
+          {activeTab === "allMessagesForTheAdministrator" && (
+            <div>
+              {activeTab === "allMessagesForTheAdministrator" && (
+                <div className="messages-section">
+                  <div className="section-header">
+                    <h2>Сообщения пользователей</h2>
+                  </div>
+
+                  {Object.keys(allMessagesForTheAdministrator).length === 0 ? (
+                    <p
+                      style={{
+                        textAlign: "center",
+                        padding: "40px",
+                        color: "#999",
+                      }}
+                    >
+                      Нет сообщений
+                    </p>
+                  ) : (
+                    // Перебираем пары [userId, messages]
+                    Object.entries(allMessagesForTheAdministrator).map(
+                      ([userId, messages]) => (
+                        <div key={userId} className="user-messages-group">
+                          <h3>Пользователь ID: {userId}</h3>
+                          <div className="messages-list">
+                            {messages.map((msg, index) => (
+                              <div key={index} className="message-card">
+                                <p>
+                                  {msg.message ||
+                                    "Сообщение без текста"} - Это сообщения пользователя
+                                </p>
+                                {/* Если есть дата, можно добавить */}
+                                {msg.createdAt && (
+                                  <span className="message-date">
+                                    {new Date(msg.createdAt).toLocaleString(
+                                      "ru-RU",
+                                    )} - это то, когда он написал
+                                  </span>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ),
+                    )
+                  )}
+                </div>
+              )}
             </div>
           )}
         </div>

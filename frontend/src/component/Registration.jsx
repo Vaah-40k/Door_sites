@@ -45,13 +45,16 @@ class Registration extends React.Component {
     }
 
     try {
-      const response = await fetch("http://localhost:3500/registration", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${import.meta.env.VITE_BASE_URL_BACKEND}/registration`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(this.state.registrationData),
         },
-        body: JSON.stringify(this.state.registrationData),
-      });
+      );
 
       const data = await response.json();
       console.log(data);

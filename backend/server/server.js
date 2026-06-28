@@ -9,9 +9,7 @@ const dotenv = require("dotenv").config({
 });
 //sadadasdadasdsdasdad
 app.use(cors());
-console.log(process.env.PORT);
-console.log(process.env.VITE_BASE_URL_BACKEND);
-console.log(process.env.JWTSECRETKEYACCESS);
+
 const registration = require("./service/registration");
 const authorizeUser = require("./service/autarization"); // исправлено имя
 const TokenVerifier = require("./service/JWT/verifyJWTToken");
@@ -185,25 +183,20 @@ app.post(
 
 app.get("/show-all-message-user", async (req, res) => {
   try {
-    const userID = jwt.decode(
+    const administratorId = jwt.decode(
       req.headers.authorization.split(" ")[1],
       process.env.JWTSECRETKEYACCESS,
     ).id_user;
 
-    const allMessageSequelize = await messageUser.findAll({
-      where: {
-        ID_User: userID,
-      },
-    });
-    const allMessage = allMessageSequelize.map((dataValues) =>
+    const allMessageSequelize = await messageUser.findAll();
+    const allData = allMessageSequelize.map((dataValues) =>
       dataValues.get({ plain: true }),
     );
-    const data = JSON.stringify(allMessage);
-
+    const groupData = Object.groupBy(allData, (allData) => allData.ID_User);
     res.status(200).json({
       seccess: true,
-      message: "Выведенны сообщения пользователя",
-      allMessage,
+      message: "Выведенны все сообщения пользователя",
+      groupData,
     });
   } catch (err) {
     console.log("Произошла ошибка отображения сообщений пользоватлей - ", err);
