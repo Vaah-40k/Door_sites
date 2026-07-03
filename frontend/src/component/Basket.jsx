@@ -89,7 +89,7 @@ const Basket = () => {
                 <div className="basket-card-title">
                   <strong>{item.title || "Товар"}</strong>
                   {item.size && (
-                    <span className="item-size">{item.size} см</span>
+                    <span className="item-size">{item.size} мм</span>
                   )}
                 </div>
 

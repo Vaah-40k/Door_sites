@@ -4,11 +4,8 @@ import { useNavigate } from "react-router-dom";
 import "../styles/account.css";
 
 const Account = () => {
-  const administrationOrNot = true;
-
   const token = localStorage.getItem("accessToken");
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("profile");
   const [message, setMessage] = useState(" ");
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -53,6 +50,36 @@ const Account = () => {
       image: "/api/placeholder/200/150",
     },
   ]);
+
+  // Функция для декодирования JWT (без библиотеки)
+  const parseJwt = (token) => {
+    try {
+      const base64Url = token.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split("")
+          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+          .join(""),
+      );
+      return JSON.parse(jsonPayload);
+    } catch (e) {
+      return null;
+    }
+  };
+
+  // Инициализируем активную вкладку в зависимости от роли
+  const [activeTab, setActiveTab] = useState(() => {
+    const token = localStorage.getItem("accessToken");
+    const decoded = token ? parseJwt(token) : null;
+    return decoded?.role === "administrator"
+      ? "allMessagesForTheAdministrator"
+      : "profile";
+  });
+
+  // Получаем роль из токена
+  const decoded = token ? parseJwt(token) : null;
+  const administrationOrNot = decoded?.role === "administrator";
 
   // Валидация
   const validateEmail = (email) => {
@@ -221,7 +248,6 @@ const Account = () => {
         },
       );
       const data = await response.json();
-      console.log(data.groupData);
 
       setAllMessagesForTheAdministrator(data.groupData);
     }
@@ -415,6 +441,18 @@ const Account = () => {
             </div>
             <h3>{user.first_name || "Пользователь"}</h3>
             <p>{user.email}</p>
+            {/* ИЗМЕНЕНИЕ: если администратор, показываем подпись */}
+            {administrationOrNot && (
+              <p
+                style={{
+                  color: "#ff5f2f",
+                  fontWeight: "bold",
+                  marginTop: "5px",
+                }}
+              >
+                👑 Администратор
+              </p>
+            )}
           </div>
 
           <nav className="account-nav">
@@ -452,7 +490,9 @@ const Account = () => {
                   onClick={() => setActiveTab("allMessagesForTheAdministrator")}
                 >
                   ❤️ Сообщения
-                  <span className="badge">{Object.keys(allMessagesForTheAdministrator).length}</span>
+                  <span className="badge">
+                    {Object.keys(allMessagesForTheAdministrator).length}
+                  </span>
                 </button>{" "}
               </>
             )}
@@ -469,7 +509,8 @@ const Account = () => {
             <div className="profile-section">
               <div className="section-header">
                 <h2>Личная информация</h2>
-                {!isEditing && (
+                {/* ИЗМЕНЕНИЕ: скрываем кнопку редактирования для администратора */}
+                {!isEditing && administrationOrNot !== true && (
                   <button
                     className="edit-btn"
                     onClick={() => setIsEditing(true)}
@@ -605,6 +646,15 @@ const Account = () => {
                     <span className="info-label">Адрес доставки:</span>
                     <span className="info-value">{user.address}</span>
                   </div>
+                  {/* ИЗМЕНЕНИЕ: дополнительно показываем роль в профиле (опционально) */}
+                  {administrationOrNot && (
+                    <div className="info-row">
+                      <span className="info-label">Роль:</span>
+                      <span className="info-value" style={{ color: "#ff5f2f" }}>
+                        Администратор
+                      </span>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -762,15 +812,16 @@ const Account = () => {
                             {messages.map((msg, index) => (
                               <div key={index} className="message-card">
                                 <p>
-                                  {msg.message ||
-                                    "Сообщение без текста"} - Это сообщения пользователя
+                                  {msg.message || "Сообщение без текста"} - Это
+                                  сообщения пользователя
                                 </p>
                                 {/* Если есть дата, можно добавить */}
                                 {msg.createdAt && (
                                   <span className="message-date">
                                     {new Date(msg.createdAt).toLocaleString(
                                       "ru-RU",
-                                    )} - это то, когда он написал
+                                    )}{" "}
+                                    - это то, когда он написал
                                   </span>
                                 )}
                               </div>

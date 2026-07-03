@@ -82,7 +82,7 @@ const Cart = () => {
               <img src={sample.src_img} alt={sample.alt} />
               <h3>{sample.title}</h3>
               <p className="sample-price">{sample.price} ₽</p>
-              <p className="sample-size">{sample.size} см</p>
+              <p className="sample-size">{sample.size} мм</p>
               <button
                 className="sample-btn"
                 onClick={() => (window.location.href = "/catalog")}
@@ -110,7 +110,7 @@ const Cart = () => {
         <div className="cart-text">
           <h1>{product.title}</h1>
           <p>{product.price} ₽</p>
-          <p>Размер: {product.size} см</p>
+          <p>Размер: {product.size} мм</p>
           <p>Материал: {product.material || "Массив дуба"}</p>
           <p>
             Описание:{" "}

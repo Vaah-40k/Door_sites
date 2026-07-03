@@ -22,6 +22,7 @@ const {
   Cards,
   User,
   application,
+  administrator,
 } = require("./bd/indexdb");
 const { where } = require("sequelize");
 
@@ -78,21 +79,47 @@ app.post("/authorization", async (req, res) => {
 app.post("/profile", async (req, res) => {
   try {
     const token = req.headers.authorization.split(" ")[1];
-    const { id_user } = jwt.decode(token);
-    const { first_name, last_name, midlle_name, email, phone } =
-      await User.findByPk(id_user);
-    res.status(200).json({
-      first_name,
-      last_name,
-      midlle_name,
-      email,
-      phone,
+    const decoded = jwt.decode(token);
+    const userId = decoded.id_user;
+
+    // Сначала ищем в таблице пользователей
+    let user = await User.findByPk(userId);
+    let isAdmin = false;
+
+    if (!user) {
+      // Если не найден, ищем в администраторах
+      const admin = await administrator.findByPk(userId);
+      if (admin) {
+        user = admin;
+        isAdmin = true;
+      }
+    }
+
+    if (!user) {
+      return res.status(404).json({
+        seccess: false,
+        message: "Пользователь не найден",
+      });
+    }
+
+    // Формируем ответ
+    // У администратора нет полей first_name, last_name и т.д., поэтому заполняем их пустыми строками
+    const response = {
+      first_name: user.first_name || "",
+      last_name: user.last_name || "",
+      midlle_name: user.midlle_name || "",
+      email: user.email || "",
+      phone: user.phone || "",
+      address: user.address || "",
       seccess: true,
-    });
+    };
+
+    res.status(200).json(response);
   } catch (err) {
+    console.error(err);
     res.status(500).json({
       seccess: false,
-      message: `Ошибка нахождения пользователя в БД, текст ошибки - ${err}`,
+      message: `Ошибка нахождения пользователя в БД: ${err.message}`,
     });
   }
 });
@@ -217,6 +244,61 @@ app.get("/show_cards", async (req, res) => {
   } catch (err) {
     console.log("Ошибка отображения каталога");
     res.status(403).json({ err: err, seccess: false });
+  }
+});
+
+app.post("/add_card", TokenVerifier.protect(), async (req, res) => {
+  try {
+    // Проверяем, что пользователь – администратор
+    if (req.user.role !== "administrator") {
+      return res
+        .status(403)
+        .json({ success: false, message: "Доступ запрещён" });
+    }
+
+    const {
+      src_img,
+      title,
+      price,
+      price_opt,
+      price_small_opt,
+      price_mrc,
+      price_rrc,
+      size,
+      alt,
+    } = req.body;
+
+    // Валидация обязательных полей (NOT NULL в БД)
+    if (!title || !price || !size || !alt || !src_img) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Заполните все обязательные поля: src_img, title, price, size, alt",
+      });
+    }
+
+    // Создаём запись в таблице cards
+    const newCard = await Cards.create({
+      src_img,
+      title,
+      price,
+      price_opt: price_opt || null,
+      price_small_opt: price_small_opt || null,
+      price_mrc: price_mrc || null,
+      price_rrc: price_rrc || null,
+      size,
+      alt,
+      // createdAt и updatedAt проставятся автоматически
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Товар добавлен",
+      data: newCard,
+    });
+  } catch (error) {
+    console.error("Ошибка добавления товара:", error);
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 // ========== КОРЗИНА ==========

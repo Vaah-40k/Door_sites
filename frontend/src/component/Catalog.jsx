@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Cart_b3 from "./Cart-b3";
 import "../styles/catalog.css";
-import { useBasket } from "../hooks/useBasket"; // импортируем хук
+import { useBasket } from "../hooks/useBasket";
 
 const Catalog = () => {
   const [filters, setFilters] = useState({
@@ -10,8 +10,30 @@ const Catalog = () => {
     maxPrice: "",
   });
 
-  // Получаем функцию добавления из хука
   const { addToBasket } = useBasket();
+
+
+ const parseJwt = (token) => {
+    try {
+      const base64Url = token.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split("")
+          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+          .join(""),
+      );
+      return JSON.parse(jsonPayload);
+    } catch (e) {
+      return null;
+    }
+  };
+
+  const token = localStorage.getItem("accessToken");
+  
+  const role = parseJwt(token).role
+  console.log(role)
+  const isAdmin = role === "administrator";
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -33,9 +55,9 @@ const Catalog = () => {
     <div className="catalog">
       <div className="catalog-content">
         <div className="filter">
+          {/* Фильтры без изменений */}
           <div className="filter-content">
             <h1>Фильтр</h1>
-
             <div className="filter-group">
               <label>Поиск по названию:</label>
               <input
@@ -47,7 +69,6 @@ const Catalog = () => {
                 className="filter-input"
               />
             </div>
-
             <div className="filter-group">
               <label>Цена от:</label>
               <input
@@ -60,7 +81,6 @@ const Catalog = () => {
                 min="0"
               />
             </div>
-
             <div className="filter-group">
               <label>Цена до:</label>
               <input
@@ -73,7 +93,6 @@ const Catalog = () => {
                 min="0"
               />
             </div>
-
             <button onClick={resetFilters} className="reset-btn">
               Сбросить фильтры
             </button>
@@ -81,11 +100,14 @@ const Catalog = () => {
         </div>
 
         <div className="cart">
-          {/* Передаём addToBasket напрямую */}
-          <Cart_b3 filters={filters} addToBasket={addToBasket} />
+          {/* Передаём isAdmin в компонент каталога */}
+          <Cart_b3
+            filters={filters}
+            addToBasket={addToBasket}
+            isAdmin={isAdmin}
+          />
         </div>
       </div>
-      {/* Компонент Basket полностью удалён */}
     </div>
   );
 };

@@ -13,6 +13,7 @@ const testCard = require("./modules/test_card")(sequelize);
 const basket = require("./modules/basket")(sequelize);
 const Cards = require("./modules/cards")(sequelize);
 const application = require("./modules/application")(sequelize);
+const administrator = require("./modules/administrators")(sequelize);
 module.exports = {
   User,
   AllDoor,
@@ -22,4 +23,5 @@ module.exports = {
   basket,
   Cards,
   application,
+  administrator,
 };

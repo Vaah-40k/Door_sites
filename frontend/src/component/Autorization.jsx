@@ -22,13 +22,16 @@ const Autorization = () => {
     event.preventDefault();
 
     try {
-      const response = await fetch("/authorization", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${import.meta.env.VITE_BASE_URL_BACKEND}/authorization`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(authData),
         },
-        body: JSON.stringify(authData),
-      });
+      );
 
       const data = await response.json();
 
