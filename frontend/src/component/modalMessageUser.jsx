@@ -7,9 +7,30 @@ const ModalMessageUser = () => {
   const [isOpen, setIsOpen] = useState(false);
   const messagesEndRef = useRef(null);
 
+  const loadMessages = async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BASE_URL_BACKEND}/user-messages`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      const result = await response.json();
+      if (result.success) {
+        setMessages(result.messages || []);
+      }
+    } catch (error) {
+      console.error("Ошибка загрузки сообщений:", error);
+    }
+  };
+
   useEffect(() => {
     if (isOpen) {
-      showMessageAll();
+      loadMessages();
     }
   }, [isOpen]);
 
@@ -21,6 +42,11 @@ const ModalMessageUser = () => {
 
   const sendMessage = async (msg) => {
     if (!msg.trim()) return;
+    // Проверка авторизации перед отправкой
+    if (!token) {
+      alert("Прежде чем что-либо написать, авторизуйтесь в системе");
+      return;
+    }
     try {
       const response = await fetch(
         `${import.meta.env.VITE_BASE_URL_BACKEND}/send-message-user-to-administrator`,
@@ -31,39 +57,26 @@ const ModalMessageUser = () => {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ textUser: msg }),
-        }
+        },
       );
       const result = await response.json();
       if (result.success) {
         setInputMessage("");
-        await showMessageAll();
+        await loadMessages();
       }
     } catch (error) {
       console.error("Ошибка отправки:", error);
     }
   };
 
-  const showMessageAll = async () => {
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_BASE_URL_BACKEND}/show-all-message-user`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const result = await response.json();
-      const data = result.allMessage || [];
-      setMessages(data);
-    } catch (error) {
-      console.error("Ошибка загрузки:", error);
+  const toggleModal = () => {
+    // Проверка авторизации перед открытием
+    if (!token) {
+      alert("Прежде чем что-либо написать, авторизуйтесь в системе");
+      return;
     }
+    setIsOpen((prev) => !prev);
   };
-
-  const toggleModal = () => setIsOpen((prev) => !prev);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -72,8 +85,12 @@ const ModalMessageUser = () => {
 
   return (
     <>
-      {/* Кнопка-триггер */}
-      {isOpen ? (<button className="chat-trigger " onClick={toggleModal} aria-label="Открыть чат">
+      {/* Кнопка-триггер (всегда видна) */}
+      <button
+        className="chat-trigger"
+        onClick={toggleModal}
+        aria-label="Открыть чат"
+      >
         <svg
           width="28"
           height="28"
@@ -89,7 +106,11 @@ const ModalMessageUser = () => {
         {messages.length > 0 && (
           <span className="chat-badge">{messages.length}</span>
         )}
-      </button>):( <div className="chat-widget">
+      </button>
+
+      {/* Модальное окно (всплывает справа) */}
+      {isOpen && (
+        <div className="chat-widget">
           <div className="chat-modal">
             <div className="chat-header">
               <h3>Сообщения</h3>
@@ -106,7 +127,10 @@ const ModalMessageUser = () => {
                 </div>
               ) : (
                 messages.map((item) => (
-                  <div key={item.ID_message} className="chat-message">
+                  <div
+                    key={item.ID_message || item.id}
+                    className={`chat-message ${item.sender === "admin" ? "admin-chat-message" : "user-message"}`}
+                  >
                     <div className="message-bubble">
                       <p>{item.message}</p>
                     </div>
@@ -149,10 +173,8 @@ const ModalMessageUser = () => {
               </button>
             </form>
           </div>
-        </div>)}
-      
-
-      {/* Модальное окно (всплывает справа) */}
+        </div>
+      )}
     </>
   );
 };

@@ -12,8 +12,7 @@ const Catalog = () => {
 
   const { addToBasket } = useBasket();
 
-
- const parseJwt = (token) => {
+  const parseJwt = (token) => {
     try {
       const base64Url = token.split(".")[1];
       const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
@@ -30,9 +29,9 @@ const Catalog = () => {
   };
 
   const token = localStorage.getItem("accessToken");
-  
-  const role = parseJwt(token).role
-  console.log(role)
+
+  const role = parseJwt(token).role;
+  console.log(role);
   const isAdmin = role === "administrator";
 
   const handleFilterChange = (e) => {

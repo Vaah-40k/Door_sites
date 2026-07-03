@@ -23,6 +23,7 @@ const {
   User,
   application,
   administrator,
+  AdminReply,
 } = require("./bd/indexdb");
 const { where } = require("sequelize");
 
@@ -208,30 +209,141 @@ app.post(
   },
 );
 
+// МОДАЛКА
+// показ сообщений админу
 app.get("/show-all-message-user", async (req, res) => {
   try {
-    const administratorId = jwt.decode(
-      req.headers.authorization.split(" ")[1],
-      process.env.JWTSECRETKEYACCESS,
-    ).id_user;
+    // Проверяем, что запрос от администратора (можно через токен)
+    const token = req.headers.authorization.split(" ")[1];
+    const decoded = jwt.decode(token);
+    if (decoded.role !== "administrator") {
+      return res
+        .status(403)
+        .json({ success: false, message: "Доступ запрещён" });
+    }
 
-    const allMessageSequelize = await messageUser.findAll();
-    const allData = allMessageSequelize.map((dataValues) =>
-      dataValues.get({ plain: true }),
-    );
-    const groupData = Object.groupBy(allData, (allData) => allData.ID_User);
+    // Получаем все сообщения пользователей
+    const userMessages = await messageUser.findAll();
+    const userData = userMessages.map((m) => ({
+      ...m.dataValues,
+      sender: "user",
+    }));
+
+    // Получаем все ответы администратора
+    const adminReplies = await AdminReply.findAll();
+    const adminData = adminReplies.map((m) => ({
+      ...m.dataValues,
+      sender: "admin",
+    }));
+
+    // Объединяем
+    const allMessages = [...userData, ...adminData];
+
+    // Группируем по ID_User
+    const groupData = allMessages.reduce((acc, msg) => {
+      const userId = msg.ID_User;
+      if (!acc[userId]) acc[userId] = [];
+      acc[userId].push(msg);
+      return acc;
+    }, {});
+
+    // Сортируем сообщения каждого пользователя по времени (от старых к новым)
+    for (const userId in groupData) {
+      groupData[userId].sort(
+        (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
+      );
+    }
+
     res.status(200).json({
-      seccess: true,
-      message: "Выведенны все сообщения пользователя",
+      success: true,
+      message: "Все сообщения и ответы",
       groupData,
     });
   } catch (err) {
-    console.log("Произошла ошибка отображения сообщений пользоватлей - ", err);
-    res.status(403).json({
-      seccess: false,
-      message: "Произошла ошибка отображения сообщений пользоватлей - ",
-      err,
+    console.error("Ошибка получения сообщений:", err);
+    res.status(500).json({
+      success: false,
+      message: "Ошибка получения сообщений",
+      error: err.message,
     });
+  }
+});
+
+// отправка админом сообщений
+app.post("/admin/reply", TokenVerifier.protect(), async (req, res) => {
+  try {
+    // Проверяем роль
+    if (req.user.role !== "administrator") {
+      return res
+        .status(403)
+        .json({ success: false, message: "Доступ запрещён" });
+    }
+
+    const { ID_User, message } = req.body;
+    if (!ID_User || !message) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "ID пользователя и текст обязательны",
+        });
+    }
+
+    // Создаём ответ
+    const reply = await AdminReply.create({
+      ID_User,
+      message,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Ответ отправлен",
+      data: {
+        ...reply.dataValues,
+        sender: "admin",
+      },
+    });
+  } catch (err) {
+    console.error("Ошибка отправки ответа:", err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+// показ сообщений пользователю
+app.get("/user-messages", TokenVerifier.protect(), async (req, res) => {
+  try {
+    const userId = req.user.id_user;
+
+    // Сообщения пользователя
+    const userMessages = await messageUser.findAll({
+      where: { ID_User: userId }
+    });
+    const userData = userMessages.map(m => ({
+      ...m.dataValues,
+      sender: 'user'
+    }));
+
+    // Ответы администратора
+    const adminReplies = await AdminReply.findAll({
+      where: { ID_User: userId }
+    });
+    const adminData = adminReplies.map(m => ({
+      ...m.dataValues,
+      sender: 'admin'
+    }));
+
+    // Объединяем и сортируем по createdAt (старые сверху)
+    const allMessages = [...userData, ...adminData];
+    allMessages.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+    res.status(200).json({
+      success: true,
+      messages: allMessages
+    });
+  } catch (err) {
+    console.error("Ошибка получения сообщений пользователя:", err);
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 

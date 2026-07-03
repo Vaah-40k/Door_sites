@@ -5,10 +5,11 @@ import "../styles/registration.css";
 const Autorization = () => {
   const [authData, setAuthData] = useState({
     email: "",
-    password: "", // Изменено с password_one на password (как в index.html)
+    password: "",
   });
   const [authMessage, setAuthMessage] = useState("");
-  const [messageType, setMessageType] = useState(""); // "success" или "error"
+  const [messageType, setMessageType] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleAuthChange = (e) => {
     const { name, value } = e.target;
@@ -16,6 +17,10 @@ const Autorization = () => {
       ...prev,
       [name]: value,
     }));
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
   };
 
   const handleAuthSubmit = async (event) => {
@@ -36,7 +41,6 @@ const Autorization = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // Сохраняем токены (как в index.html)
         const accessToken = data.accessToken;
         const refreshToken = data.refreshToken;
         localStorage.setItem("accessToken", accessToken);
@@ -76,15 +80,51 @@ const Autorization = () => {
             </div>
             <div className="row6">
               <label>Пароль: </label>
-              <input
-                minLength="8"
-                type="password"
-                name="password"
-                placeholder="Введите пароль..."
-                value={authData.password}
-                onChange={handleAuthChange}
-                required
-              />
+              <div className="password-wrapper">
+                <input
+                  minLength="8"
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  placeholder="Введите пароль..."
+                  value={authData.password}
+                  onChange={handleAuthChange}
+                  required
+                />
+                <button
+                  type="button"
+                  className="password-toggle-btn"
+                  onClick={togglePasswordVisibility}
+                  aria-label={
+                    showPassword ? "Скрыть пароль" : "Показать пароль"
+                  }
+                >
+                  {showPassword ? (
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                      <line x1="1" y1="1" x2="23" y2="23" />
+                    </svg>
+                  ) : (
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
           <div className="form-btn">

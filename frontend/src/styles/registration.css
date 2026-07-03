@@ -160,3 +160,53 @@
 .form-btn a:hover {
   color: #e04e22;
 }
+/* Контейнер для поля пароля с кнопкой */
+.password-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.password-wrapper input {
+  flex: 1;
+  padding-right: 45px;
+  width: 100%;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  transition: all 0.2s ease;
+}
+
+.password-toggle-btn:hover {
+  color: #333;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.password-toggle-btn svg {
+  display: block;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .password-wrapper {
+    width: 100%;
+  }
+
+  .password-toggle-btn {
+    right: 10px;
+  }
+}

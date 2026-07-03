@@ -591,7 +591,7 @@
 
 /* Кнопка добавления товара */
 .add-product-btn {
-  background: #4caf50;
+  background: #ff5f2f;
   color: white;
   border: none;
   border-radius: 50%;
@@ -605,77 +605,341 @@
   transition: 0.2s;
 }
 .add-product-btn:hover {
-  background: #45a049;
+  background: #e04e22;
   transform: scale(1.1);
 }
 
-/* Модальное окно */
+/* ... существующие стили ... */
+
+/* ===== МОДАЛЬНОЕ ОКНО (улучшенное) ===== */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  backdrop-filter: blur(4px);
+  animation: fadeInOverlay 0.3s ease;
 }
+
+@keyframes fadeInOverlay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .modal-content {
   background: white;
-  padding: 30px;
-  border-radius: 10px;
-  max-width: 600px;
-  width: 90%;
+  border-radius: 16px;
+  padding: 40px;
+  max-width: 550px;
+  width: 92%;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  position: relative;
+  animation: slideUpModal 0.3s ease;
 }
+
+@keyframes slideUpModal {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Заголовок модалки */
 .modal-content h2 {
-  margin-top: 0;
+  font-family: "AdventPro-Bold", sans-serif;
+  font-size: 1.8em;
+  color: #000;
   text-align: center;
+  margin: 0 0 8px 0;
+  padding-bottom: 15px;
+  border-bottom: 3px solid #ff5f2f;
 }
-.form-group {
-  margin-bottom: 15px;
+
+.modal-subtitle {
+  font-family: "AdventPro-Regular", sans-serif;
+  font-size: 1em;
+  color: #888;
+  text-align: center;
+  margin: -8px 0 25px 0;
 }
-.form-group label {
+
+/* Группа полей */
+.modal-content .form-group {
+  margin-bottom: 20px;
+}
+
+.modal-content .form-group label {
   display: block;
-  margin-bottom: 5px;
-  font-weight: 500;
+  font-family: "AdventPro-Bold", sans-serif;
+  font-size: 0.95em;
+  color: #333;
+  margin-bottom: 6px;
 }
-.form-group input {
+
+.modal-content .form-group input,
+.modal-content .form-group textarea,
+.modal-content .form-group select {
   width: 100%;
-  padding: 8px 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 12px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-family: "AdventPro-Regular", sans-serif;
+  font-size: 1em;
+  transition: all 0.3s ease;
   box-sizing: border-box;
+  background: #fafafa;
 }
-.form-actions {
+
+.modal-content .form-group input:focus,
+.modal-content .form-group textarea:focus,
+.modal-content .form-group select:focus {
+  outline: none;
+  border-color: #33cccc;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(51, 204, 204, 0.15);
+}
+
+.modal-content .form-group textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.modal-content .form-group input::placeholder,
+.modal-content .form-group textarea::placeholder {
+  color: #bbb;
+}
+
+/* Действия модалки */
+.modal-content .form-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px;
+  gap: 15px;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 2px solid #f0f0f0;
 }
-.submit-btn {
-  background: #4caf50;
+
+.modal-content .form-actions .submit-btn {
+  background: #ff5f2f;
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
+  padding: 12px 35px;
+  border-radius: 10px;
+  font-family: "AdventPro-Bold", sans-serif;
+  font-size: 1em;
   cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
 }
-.submit-btn:hover {
-  background: #45a049;
+
+.modal-content .form-actions .submit-btn:hover {
+  background: #e04e22;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255, 95, 47, 0.3);
 }
-.cancel-btn {
-  background: #f44336;
+
+.modal-content .form-actions .submit-btn:active {
+  transform: translateY(0);
+}
+
+.modal-content .form-actions .cancel-btn {
+  background: #f5f5f5;
+  color: #666;
+  border: 2px solid #e0e0e0;
+  padding: 12px 30px;
+  border-radius: 10px;
+  font-family: "AdventPro-Bold", sans-serif;
+  font-size: 1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.modal-content .form-actions .cancel-btn:hover {
+  background: #eee;
+  border-color: #ccc;
+}
+
+/* ===== СПЕЦИАЛЬНЫЕ СТИЛИ ДЛЯ МОДАЛКИ В CATALOG ===== */
+.catalog .modal-overlay .modal-content {
+  padding: 35px;
+}
+
+.catalog .modal-overlay .modal-content h2 {
+  font-size: 1.6em;
+}
+
+.catalog .modal-overlay .modal-content .form-actions .submit-btn {
+  background: #33cccc;
+}
+
+.catalog .modal-overlay .modal-content .form-actions .submit-btn:hover {
+  background: #2ba0a0;
+  box-shadow: 0 4px 15px rgba(51, 204, 204, 0.3);
+}
+
+/* Адаптивность модалки */
+@media (max-width: 768px) {
+  .modal-content {
+    padding: 30px 25px;
+    max-width: 95%;
+  }
+
+  .modal-content h2 {
+    font-size: 1.5em;
+  }
+
+  .modal-content .form-group input,
+  .modal-content .form-group textarea {
+    padding: 10px 14px;
+    font-size: 0.95em;
+  }
+
+  .modal-content .form-actions {
+    flex-direction: column-reverse;
+    gap: 12px;
+  }
+
+  .modal-content .form-actions .submit-btn,
+  .modal-content .form-actions .cancel-btn {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    padding: 12px;
+  }
+
+  .catalog .modal-overlay .modal-content {
+    padding: 25px 20px;
+  }
+
+  .catalog .modal-overlay .modal-content h2 {
+    font-size: 1.3em;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    padding: 25px 18px;
+    border-radius: 12px;
+  }
+
+  .modal-content h2 {
+    font-size: 1.3em;
+    padding-bottom: 12px;
+  }
+
+  .modal-subtitle {
+    font-size: 0.9em;
+  }
+
+  .modal-content .form-group {
+    margin-bottom: 15px;
+  }
+
+  .modal-content .form-group label {
+    font-size: 0.85em;
+  }
+
+  .modal-content .form-group input,
+  .modal-content .form-group textarea {
+    padding: 8px 12px;
+    font-size: 0.9em;
+    border-radius: 8px;
+  }
+}
+
+/* Стили для скролла внутри модалки */
+.modal-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+  background: #f5f5f5;
+  border-radius: 10px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+  background: #33cccc;
+  border-radius: 10px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+  background: #2ba0a0;
+}
+
+/* Стили для кнопки добавления товара (акцент на модалку) */
+.add-product-btn {
+  background: #ff5f2f;
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 1;
   cursor: pointer;
+  margin-right: 10px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
-.cancel-btn:hover {
-  background: #d32f2f;
+
+.add-product-btn:hover {
+  background: #e04e22;
+  transform: scale(1.1);
+}
+
+.add-product-btn:active {
+  transform: scale(0.9);
+}
+
+/* ===== ДОПОЛНИТЕЛЬНО: Стили для модалки с подтверждением ===== */
+.confirm-modal .modal-content {
+  max-width: 400px;
+  text-align: center;
+}
+
+.confirm-modal .modal-content .form-actions {
+  justify-content: center;
+  border-top: none;
+  padding-top: 10px;
+}
+
+.confirm-modal .modal-content .form-actions .submit-btn {
+  background: #ff5f2f;
+  min-width: 100px;
+}
+
+.confirm-modal .modal-content .form-actions .cancel-btn {
+  background: #f5f5f5;
+  min-width: 100px;
+}
+
+.confirm-modal .modal-content h2 {
+  border-bottom-color: #ff5f2f;
+  font-size: 1.4em;
+}
+
+.confirm-modal .modal-content p {
+  font-family: "AdventPro-Regular", sans-serif;
+  font-size: 1.1em;
+  color: #555;
+  margin: 15px 0 10px;
 }

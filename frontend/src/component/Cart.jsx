@@ -12,7 +12,7 @@ const sampleProducts = [
     price: 15000,
     size: "90x200",
     material: "Массив дуба",
-    src_img: "/src/assets/door1.jpg",
+    src_img: "/src/assets/cart2.jpg",
     alt: "Дверь дубовая",
   },
   {
@@ -21,7 +21,7 @@ const sampleProducts = [
     price: 18500,
     size: "80x200",
     material: "Массив дуба",
-    src_img: "/src/assets/door2.jpg",
+    src_img: "/src/assets/cart2.jpg",
     alt: "Дверь с стеклом",
   },
   {
@@ -30,7 +30,7 @@ const sampleProducts = [
     price: 22000,
     size: "100x200",
     material: "Массив дуба",
-    src_img: "/src/assets/door3.jpg",
+    src_img: "/src/assets/cart2.jpg",
     alt: "Дверь резная",
   },
 ];
@@ -100,12 +100,12 @@ const Cart = () => {
     <div className="cart">
       <div className="cart-content">
         <div className="sec-cart-img">
-          <img src={product.src_img} alt={product.alt || product.title} />
+          <img src="/src/assets/cart2.jpg" alt={product.alt || product.title} />
           <img src="/src/assets/cart2.jpg" alt="Деталь двери 1" />
-          <img src="/src/assets/cart3.jpg" alt="Деталь двери 2" />
+          <img src="/src/assets/cart2.jpg" alt="Деталь двери 2" />
         </div>
         <div className="main-cart-img">
-          <img src={product.src_img} alt={product.alt || product.title} />
+          <img src="/src/assets/cart2.jpg" alt={product.alt || product.title} />
         </div>
         <div className="cart-text">
           <h1>{product.title}</h1>

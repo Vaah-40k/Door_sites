@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: localhost
--- Время создания: Июл 03 2026 г., 01:57
+-- Время создания: Июл 03 2026 г., 09:47
 -- Версия сервера: 10.4.32-MariaDB
 -- Версия PHP: 8.2.12
 
@@ -29,6 +29,9 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `administrators` (
   `ID_administrator` int(255) NOT NULL,
+  `first_name` varchar(50) NOT NULL,
+  `last_name` varchar(50) NOT NULL,
+  `midlle_name` varchar(50) NOT NULL,
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `role` varchar(255) NOT NULL
@@ -38,8 +41,8 @@ CREATE TABLE `administrators` (
 -- Дамп данных таблицы `administrators`
 --
 
-INSERT INTO `administrators` (`ID_administrator`, `email`, `password`, `role`) VALUES
-(1, 'eldarsibrimov18@gmail.com', '$2b$12$QfEfh4mMqVohnpE658716.q8ksBmQtzh4Ha1brhOznA1r6dfy8weS', 'administrator');
+INSERT INTO `administrators` (`ID_administrator`, `first_name`, `last_name`, `midlle_name`, `email`, `password`, `role`) VALUES
+(1, 'Эльдар', 'Сибримов', 'Антонович', 'eldarsibrimov18@gmail.com', '$2b$12$QfEfh4mMqVohnpE658716.q8ksBmQtzh4Ha1brhOznA1r6dfy8weS', 'administrator');
 
 -- --------------------------------------------------------
 
@@ -154,7 +157,8 @@ INSERT INTO `basket` (`id_basket`, `id_user`, `Id_tovar`, `quantity`, `full_pric
 (141, 250, 20, 1, 4800, 0, '2026-06-24 11:47:28', '2026-06-24 11:47:28'),
 (144, 278, 6, 1, 2100, 0, '2026-06-26 12:47:32', '2026-06-26 12:47:32'),
 (145, 278, 5, 1, 3700, 1, '2026-06-26 12:47:33', '2026-06-26 12:47:38'),
-(146, 278, 16, 4, 15800, 1, '2026-06-26 12:47:35', '2026-06-26 12:47:40');
+(146, 278, 16, 4, 15800, 1, '2026-06-26 12:47:35', '2026-06-26 12:47:40'),
+(151, 1, 3, 1, 10875, 1, '2026-07-03 06:09:36', '2026-07-03 06:09:38');
 
 -- --------------------------------------------------------
 
@@ -167,6 +171,10 @@ CREATE TABLE `cards` (
   `src_img` varchar(255) NOT NULL,
   `title` varchar(255) NOT NULL,
   `price` int(255) NOT NULL,
+  `price_opt` int(11) DEFAULT NULL,
+  `price_small_opt` int(11) DEFAULT NULL,
+  `price_mrc` int(11) DEFAULT NULL,
+  `price_rrc` int(11) DEFAULT NULL,
   `size` varchar(255) NOT NULL,
   `alt` varchar(255) NOT NULL,
   `createdAt` datetime(6) NOT NULL,
@@ -177,28 +185,17 @@ CREATE TABLE `cards` (
 -- Дамп данных таблицы `cards`
 --
 
-INSERT INTO `cards` (`id_cards`, `src_img`, `title`, `price`, `size`, `alt`, `createdAt`, `updatedAt`) VALUES
-(1, 'asdasd', 'qweqweq', 123213, '100x200', '', '0000-00-00 00:00:00.000000', '0000-00-00 00:00:00.000000'),
-(2, '/img/doors/eco_veneer_white.jpg', 'Межкомнатная дверь Экошпон белая', 4500, '600x2000', 'Белая дверь из экошпона', '2026-05-29 12:36:13.215824', '2026-05-29 12:36:13.215824'),
-(3, '/img/doors/steel_entry_gray.jpg', 'Входная стальная дверь серая', 22500, '860x2050', 'Серая стальная входная дверь', '2026-05-29 12:36:13.215824', '2026-05-29 12:36:13.215824'),
-(4, '/img/doors/glass_oak.jpg', 'Дверь с остеклением Дуб', 8900, '700x2000', 'Межкомнатная дверь со вставкой из матового стекла', '2026-05-29 12:36:13.215824', '2026-05-29 12:36:13.215824'),
-(5, '/img/doors/laminate_walnut.jpg', 'Ламинированная дверь Орех', 3700, '800x2000', 'Дверь с ламинированным покрытием цвет орех', '2026-05-29 12:36:13.215824', '2026-05-29 12:36:13.215824'),
-(6, '/img/doors/accordion_white.jpg', 'Дверь-гармошка белая', 2100, '1000x2000', 'Складная дверь-гармошка для гардеробной', '2026-05-29 12:36:13.215824', '2026-05-29 12:36:13.215824'),
-(7, '/img/doors/solid_pine.jpg', 'Дверь из массива сосны', 15900, '700x2000', 'Цельная деревянная дверь из сосны', '2026-05-29 12:36:13.215824', '2026-05-29 12:36:13.215824'),
-(8, '/img/doors/double_glass.jpg', 'Двупольная дверь с остеклением', 27500, '1200x2100', 'Двустворчатая дверь для гостиной', '2026-05-29 12:36:13.215824', '2026-05-29 12:36:13.215824'),
-(9, '/img/doors/veneer_wenge.jpg', 'Шпонированная дверь Венге', 12100, '800x2000', 'Дверь из натурального шпона цвета венге', '2026-05-29 12:36:13.215824', '2026-05-29 12:36:13.215824'),
-(10, '/img/doors/fireproof_steel.jpg', 'Противопожарная дверца', 34200, '800x2000', 'Металлическая огнестойкая дверь', '2026-05-29 12:36:13.215824', '2026-05-29 12:36:13.215824'),
-(11, '/img/doors/pvc_white.jpg', 'ПВХ-дверь белая глянец', 5100, '600x2000', 'Влагостойкая дверь из ПВХ', '2026-05-29 12:36:13.215824', '2026-05-29 12:36:13.215824'),
-(12, '/img/doors/rustic_walnut.jpg', 'Дверь Рустик Орех', 18700, '900x2000', 'Дверь в деревенском стиле', '2026-05-29 12:36:13.215824', '2026-05-29 12:36:13.215824'),
-(13, '/img/doors/almond_eco.jpg', 'Экошпон Миндаль', 4300, '700x2000', 'Светлая дверь цвета миндаль', '2026-05-29 12:36:13.215824', '2026-05-29 12:36:13.215824'),
-(14, '/img/doors/black_metal_entry.jpg', 'Входная дверь чёрная', 31200, '860x2050', 'Черная металлическая дверь с терморазрывом', '2026-05-29 12:36:13.215824', '2026-05-29 12:36:13.215824'),
-(15, '/img/doors/white_glass_insert.jpg', 'Белая дверь со стеклом', 6700, '800x2000', 'Белая дверь с вертикальной стекловставкой', '2026-05-29 12:36:13.215824', '2026-05-29 12:36:13.215824'),
-(16, '/img/doors/stable_eco_beige.jpg', 'Дверь Стабильный эко беж', 3950, '600x2000', 'Бежевая дверь из экопластика', '2026-05-29 12:36:13.215824', '2026-05-29 12:36:13.215824'),
-(17, '/img/doors/loft_metal.jpg', 'Дверь Лофт металл', 28900, '1000x2100', 'Интерьерная дверь в стиле лофт', '2026-05-29 12:36:13.215824', '2026-05-29 12:36:13.215824'),
-(18, '/img/doors/oak_honey.jpg', 'Дуб мёд шпонированная', 13200, '800x2000', 'Дверь цвета медовый дуб', '2026-05-29 12:36:13.215824', '2026-05-29 12:36:13.215824'),
-(19, '/img/doors/wardrobe_sliding.jpg', 'Раздвижная дверь-купе', 10400, '1200x2000', 'Алюминиевая раздвижная система', '2026-05-29 12:36:13.215824', '2026-05-29 12:36:13.215824'),
-(20, '/img/doors/bamboo_eco.jpg', 'Экошпон Бамбук', 4800, '700x2000', 'Зеленоватая дверь под бамбук', '2026-05-29 12:36:13.215824', '2026-05-29 12:36:13.215824'),
-(21, '/img/doors/classic_white_panel.jpg', 'Классическая филенчатая белая', 7900, '800x2000', 'Филенчатая дверь из МДФ', '2026-05-29 12:36:13.215824', '2026-05-29 12:36:13.215824');
+INSERT INTO `cards` (`id_cards`, `src_img`, `title`, `price`, `price_opt`, `price_small_opt`, `price_mrc`, `price_rrc`, `size`, `alt`, `createdAt`, `updatedAt`) VALUES
+(1, '/img/doors/line_dekanto_5.jpg', 'Деканто-5', 13800, 9200, 10120, 11960, 13800, '2000x600(700;800;900)x38', 'Дверь Деканто-5, покрытие ПВХ SoftTouch', '2026-07-03 12:40:33.869300', '2026-07-03 12:40:33.869300'),
+(2, '/img/doors/line_m2_zercalo_facet.jpg', 'М2 Зеркало фацет', 11850, 7900, 8690, 10270, 11850, '2000x600(700;800;900)x38', 'Дверь М2 Зеркало фацет, покрытие ПВХ', '2026-07-03 12:40:33.869300', '2026-07-03 12:40:33.869300'),
+(3, '/img/doors/line_m5_chernyy_molding.jpg', 'М5 Черный молдинг', 10875, 7250, 7975, 9425, 10875, '2000x600(700;800;900)x38', 'Дверь М5 Черный молдинг, покрытие ПВХ', '2026-07-03 12:40:33.869300', '2026-07-03 12:40:33.869300'),
+(4, '/img/doors/line_521.jpg', '521', 19125, 12750, 14025, 16575, 19125, '2000x600(700;800;900)x38', 'Щитовая дверь 521 с алюминиевой кромкой', '2026-07-03 12:40:33.869300', '2026-07-03 12:40:33.869300'),
+(5, '/img/doors/line_523.jpg', '523', 14250, 9500, 10450, 12350, 14250, '2000x600(700;800;900)x38', 'Щитовая дверь 523 с алюминиевой кромкой', '2026-07-03 12:40:33.869300', '2026-07-03 12:40:33.869300'),
+(6, '/img/doors/line_529.jpg', '529', 16050, 10700, 11770, 13910, 16050, '2000x600(700;800;900)x38', 'Щитовая дверь 529 с зеркальной вставкой', '2026-07-03 12:40:33.869300', '2026-07-03 12:40:33.869300'),
+(7, '/img/default.jpg', 'sdsad', 14, NULL, NULL, NULL, NULL, 'asdasd', 'asddas', '2026-07-03 05:21:14.000000', '2026-07-03 05:21:14.000000'),
+(8, '/img/default.jpg', 'adasd', 231312, NULL, NULL, NULL, NULL, 'asdasd', '123213', '2026-07-03 05:40:21.000000', '2026-07-03 05:40:21.000000'),
+(9, '/img/doors/default.jpg', 'asdsad', 123123, NULL, NULL, NULL, NULL, 'qweqweqweqwe', 'qweqweqwe', '2026-07-03 06:09:22.000000', '2026-07-03 06:09:22.000000'),
+(10, '/img/doors/default.jpg', 'adsd', 123, NULL, NULL, NULL, NULL, '123123123', '123123', '2026-07-03 06:21:30.000000', '2026-07-03 06:21:30.000000');
 
 -- --------------------------------------------------------
 
@@ -245,7 +242,11 @@ INSERT INTO `messageuser` (`ID_message`, `ID_User`, `message`, `status`, `create
 (59, 278, 'jkl;', 'непрочитан', '2026-06-26 09:20:26', '2026-06-26 09:20:26'),
 (60, 278, 'фывфвфыв', 'непрочитан', '2026-06-26 10:16:41', '2026-06-26 10:16:41'),
 (61, 278, 'вффыв', 'непрочитан', '2026-06-26 10:16:43', '2026-06-26 10:16:43'),
-(62, 278, 'ААААААААААААААААААААААА', 'непрочитан', '2026-06-26 10:16:45', '2026-06-26 10:16:45');
+(62, 278, 'ААААААААААААААААААААААА', 'непрочитан', '2026-06-26 10:16:45', '2026-06-26 10:16:45'),
+(63, 282, 'asdsda', 'непрочитан', '2026-07-03 06:17:13', '2026-07-03 06:17:13'),
+(64, 282, 'adadasdsadsad', 'непрочитан', '2026-07-03 06:17:15', '2026-07-03 06:17:15'),
+(65, 282, 'фвыфвфвывыфвыфв', 'непрочитан', '2026-07-03 06:17:27', '2026-07-03 06:17:27'),
+(66, 282, 'ывфы', 'непрочитан', '2026-07-03 06:17:28', '2026-07-03 06:17:28');
 
 -- --------------------------------------------------------
 
@@ -311,9 +312,6 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`first_name`, `last_name`, `midlle_name`, `email`, `password`, `phone`, `createdAt`, `updatedAt`, `id_user`) VALUES
-('Эдуард', 'Эдуард', 'Антонович', 'eldarasdasdsibrimov18@gmail.com', '$2b$12$C3lToHyLINwCnuf2/QfjJ.BNkibh3dO94g8aaVVAiHT5BLmY.m98q', '78412545855', '2026-05-24 23:26:38', '2026-05-24 23:26:38', 225),
-('Эдуард', 'Эдуард', 'Антонович', 'eldarsibrimov18@gmail.com', '$2b$12$bebF3aF4OjFXI3eHWO/teu.Ms4Z7SwrTLosjmBMzhE/Kvl6THo4eq', '82542522222', '2026-05-25 00:45:26', '2026-05-25 00:45:26', 226),
-('Эдуард', 'Эдуард', 'Антонович', 'eldarsisbrimov18@gmail.com', '$2b$12$ocgwP5Zl8PuA2/t8g0t94.sd.YSjlrWR4paz.XLURL7jeekYBZuFK', '78412545855', '2026-05-25 00:47:17', '2026-05-25 00:47:17', 227),
 ('Эдуард', 'Эдуард', 'Антонович', 'eldarsasdibrimov18@gmail.com', '$2b$12$N2wDxMeeZ1k4F6hxGQTWyuQmrlvgHYuGFXmD/Aglut9AWeja1e5D6', '78412545855', '2026-05-25 00:47:54', '2026-05-25 00:47:54', 228),
 ('Эдуард', 'Эдуард', 'Антонович', 'elsddarsibrimov18@gmail.com', '$2b$12$cfXPIG5I4aLHRSpShgjdEuWOjRydVTlZy71Bwh.grL5nh9PB1T3le', '82542522222', '2026-05-25 00:48:45', '2026-05-25 00:48:45', 229),
 ('Эдуард', 'Эдуард', 'Антонович', 'eldarsibrimasdasdov18@gmail.com', '$2b$12$QfEfh4mMqVohnpE658716.q8ksBmQtzh4Ha1brhOznA1r6dfy8weS', '78412545855', '2026-05-25 00:51:23', '2026-05-25 00:51:23', 230),
@@ -364,7 +362,11 @@ INSERT INTO `user` (`first_name`, `last_name`, `midlle_name`, `email`, `password
 ('Эдуард', 'Эдуард', 'Антонович', 'eldarsisdadsdasdbrimov1812123@gmail.com', '$2b$12$EJM9MRH1LKZFCPnKPmknJu2ECCA1SsYc1VwoqNY7VociKPpAIdGMe', '78412545855', '2026-06-25 12:28:01', '2026-06-25 12:28:01', 275),
 ('Эдуард', 'Эдуард', 'Антонович', 'eldarsidfsdfdsfsdbrimov1812123@gmail.com', '$2b$12$JLyVNMF6sdCj5EcyOQPeoedW72LoWhWOBuUp8BeEcRvllP9plj9wG', '78412545855', '2026-06-25 13:25:54', '2026-06-25 13:25:54', 276),
 ('Эдуард', 'Эдуард', 'Антонович', 'eldarsibrdsadasdasdasdasdmov1812123@gmail.com', '$2b$12$W7EEifcpqfEmF0RcVnfPHeeKM6Zcielz315o/bIVo7Hwdl7z.BGKy', '78412545855', '2026-06-26 08:38:27', '2026-06-26 08:38:27', 277),
-('Эдуард', 'Эдуард', 'Антонович', 'asdasdasasdaseldarsibrimov1812123@gmail.com', '$2b$12$s8pFnd4t13HaKro31hPreu3jVoXyIdINgTkzviuuHPbYlOnzUhea2', '78412545855', '2026-06-26 09:14:42', '2026-06-26 09:14:42', 278);
+('Эдуард', 'Эдуард', 'Антонович', 'asdasdasasdaseldarsibrimov1812123@gmail.com', '$2b$12$s8pFnd4t13HaKro31hPreu3jVoXyIdINgTkzviuuHPbYlOnzUhea2', '78412545855', '2026-06-26 09:14:42', '2026-06-26 09:14:42', 278),
+('Эдуард', 'Эдуард', 'Антонович', 'eldarsibrisddsdsdsdov1812123@gmail.com', '$2b$12$Bxe4uSDsL7UuYsJmT3Yjz.vibjoRLYZ.Ga5EjGN/NNud5hQZoQ6Ze', '78412545855', '2026-07-03 02:41:04', '2026-07-03 02:41:04', 279),
+('Эдуард', 'Эдуард', 'Антонович', 'eldarsibriasdasdasdsadmov1812123@gmail.com', '$2b$12$.dOnxNB/TNkOpj1/4VRWFeoFjbW3atduwBzwM8/48FrBwnk8JasnS', '79141553625', '2026-07-03 04:38:18', '2026-07-03 04:38:18', 280),
+('Эдуард', 'Эдуард', 'Антонович', 'eldasdasdasarsibrimov1812123@gmail.com', '$2b$12$E37HKAoQGMOzt9lLq6UXlOeX7EhicofVVGOHi5PDWMc7kT4RhKKV.', '78412545855', '2026-07-03 05:29:48', '2026-07-03 05:29:48', 281),
+('Эдуард', 'Эдуард', 'Антонович', 'eldarsibridsadsdsmov1812123@gmail.com', '$2b$12$TP2kLKj9CkrGFG5fGogqa.9wfCHCjxJ/ua9qG3BM7m.f.XAJrwBsC', '78412545855', '2026-07-03 06:17:09', '2026-07-03 06:17:09', 282);
 
 --
 -- Индексы сохранённых таблиц
@@ -451,25 +453,25 @@ ALTER TABLE `all_door`
 -- AUTO_INCREMENT для таблицы `application`
 --
 ALTER TABLE `application`
-  MODIFY `id_application` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;
+  MODIFY `id_application` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=86;
 
 --
 -- AUTO_INCREMENT для таблицы `basket`
 --
 ALTER TABLE `basket`
-  MODIFY `id_basket` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=147;
+  MODIFY `id_basket` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=152;
 
 --
 -- AUTO_INCREMENT для таблицы `cards`
 --
 ALTER TABLE `cards`
-  MODIFY `id_cards` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id_cards` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT для таблицы `messageuser`
 --
 ALTER TABLE `messageuser`
-  MODIFY `ID_message` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
+  MODIFY `ID_message` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
 
 --
 -- AUTO_INCREMENT для таблицы `order_door`
@@ -487,7 +489,7 @@ ALTER TABLE `test_card_tovara`
 -- AUTO_INCREMENT для таблицы `user`
 --
 ALTER TABLE `user`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=279;
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=283;
 
 --
 -- Ограничения внешнего ключа сохраненных таблиц
@@ -497,15 +499,7 @@ ALTER TABLE `user`
 -- Ограничения внешнего ключа таблицы `application`
 --
 ALTER TABLE `application`
-  ADD CONSTRAINT `fk_application_tovar` FOREIGN KEY (`Id_tovar`) REFERENCES `cards` (`id_cards`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_application_user` FOREIGN KEY (`id_user`) REFERENCES `user` (`id_user`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Ограничения внешнего ключа таблицы `basket`
---
-ALTER TABLE `basket`
-  ADD CONSTRAINT `fk_basket_user` FOREIGN KEY (`id_user`) REFERENCES `user` (`id_user`),
-  ADD CONSTRAINT `fk_tovar` FOREIGN KEY (`Id_tovar`) REFERENCES `cards` (`id_cards`);
 
 --
 -- Ограничения внешнего ключа таблицы `messageuser`

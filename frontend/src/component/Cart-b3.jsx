@@ -9,7 +9,7 @@ const Cart_b3 = ({ filters, addToBasket, isAdmin }) => {
   // Состояния для модального окна добавления товара
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
-    src_img: "/img/doors/default.jpg", // заглушка
+    src_img: "/src/assets/cart2.jpg", // заглушка
     title: "",
     price: "",
     price_opt: "",

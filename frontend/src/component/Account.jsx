@@ -6,12 +6,18 @@ import "../styles/account.css";
 const Account = () => {
   const token = localStorage.getItem("accessToken");
   const navigate = useNavigate();
+  const handleCatalogClick = (e) => {
+    e.preventDefault();
+    navigate("/catalog");
+  };
+  const [replyTexts, setReplyTexts] = useState({});
   const [message, setMessage] = useState(" ");
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [allMessagesForTheAdministrator, setAllMessagesForTheAdministrator] =
     useState([]);
+  const [expandedUsers, setExpandedUsers] = useState({});
 
   // Состояния для профиля
   const [user, setUser] = useState({
@@ -271,6 +277,44 @@ const Account = () => {
       setValidationErrors((prev) => ({ ...prev, phone: err }));
     }
   };
+  const handleSendReply = async (userId) => {
+    const message = replyTexts[userId]?.trim();
+    if (!message) return;
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BASE_URL_BACKEND}/admin/reply`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ ID_User: userId, message }),
+        },
+      );
+      const data = await response.json();
+      if (data.success) {
+        // Обновляем локальное состояние: добавляем новый ответ в массив сообщений этого пользователя
+        setAllMessagesForTheAdministrator((prev) => {
+          const updated = { ...prev };
+          if (updated[userId]) {
+            updated[userId] = [...updated[userId], data.data]; // data.data содержит созданный объект с sender='admin'
+          } else {
+            updated[userId] = [data.data];
+          }
+          return updated;
+        });
+        // Очищаем поле ввода для этого пользователя
+        setReplyTexts((prev) => ({ ...prev, [userId]: "" }));
+      } else {
+        alert("Не удалось отправить ответ");
+      }
+    } catch (err) {
+      console.error("Ошибка отправки ответа:", err);
+      alert("Ошибка сети");
+    }
+  };
 
   const isFormValid = () => {
     const emailErr = validateEmail(profileForm.email);
@@ -406,6 +450,14 @@ const Account = () => {
     }
   };
 
+  // Функция для переключения состояния развернутости пользователя
+  const toggleUserExpand = (userId) => {
+    setExpandedUsers((prev) => ({
+      ...prev,
+      [userId]: !prev[userId],
+    }));
+  };
+
   if (loading) {
     return (
       <div className="account">
@@ -445,7 +497,7 @@ const Account = () => {
             {administrationOrNot && (
               <p
                 style={{
-                  color: "#ff5f2f",
+                  color: "#ffffff",
                   fontWeight: "bold",
                   marginTop: "5px",
                 }}
@@ -494,6 +546,13 @@ const Account = () => {
                     {Object.keys(allMessagesForTheAdministrator).length}
                   </span>
                 </button>{" "}
+                <button
+                  className={activeTab === "orders" ? "active" : ""}
+                  onClick={handleCatalogClick}
+                >
+                  📦 Добавить товар
+                  <span className="badge">{orders.length}</span>
+                </button>
               </>
             )}
             <button className="logout-btn" onClick={handleLogout}>
@@ -783,55 +842,113 @@ const Account = () => {
               </div>
             </div>
           )}
-          {/* Сообщения от пользователей*/}
+          {/* Сообщения от пользователей */}
           {activeTab === "allMessagesForTheAdministrator" && (
-            <div>
-              {activeTab === "allMessagesForTheAdministrator" && (
-                <div className="messages-section">
-                  <div className="section-header">
-                    <h2>Сообщения пользователей</h2>
-                  </div>
+            <div className="messages-section">
+              <div className="section-header">
+                <h2>Сообщения пользователей</h2>
+              </div>
 
-                  {Object.keys(allMessagesForTheAdministrator).length === 0 ? (
-                    <p
-                      style={{
-                        textAlign: "center",
-                        padding: "40px",
-                        color: "#999",
-                      }}
-                    >
-                      Нет сообщений
-                    </p>
-                  ) : (
-                    // Перебираем пары [userId, messages]
-                    Object.entries(allMessagesForTheAdministrator).map(
-                      ([userId, messages]) => (
-                        <div key={userId} className="user-messages-group">
-                          <h3>Пользователь ID: {userId}</h3>
+              {Object.keys(allMessagesForTheAdministrator).length === 0 ? (
+                <p
+                  style={{
+                    textAlign: "center",
+                    padding: "40px",
+                    color: "#999",
+                  }}
+                >
+                  Нет сообщений
+                </p>
+              ) : (
+                // Перебираем пары [userId, messages]
+                Object.entries(allMessagesForTheAdministrator).map(
+                  ([userId, messages]) => {
+                    const isExpanded = expandedUsers[userId] || false;
+                    return (
+                      <div key={userId} className="user-messages-group">
+                        <div
+                          style={{
+                            padding: "15px 20px",
+                            background: "#f0f8f8",
+                            borderBottom: "1px solid #e0e8e8",
+                            cursor: "pointer",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            userSelect: "none",
+                          }}
+                          onClick={() => toggleUserExpand(userId)}
+                        >
+                          <h3 style={{ margin: 0, fontSize: "1.1em" }}>
+                            Пользователь ID: {userId}
+                          </h3>
+                          <span
+                            style={{
+                              fontSize: "1.2em",
+                              transition: "transform 0.3s ease",
+                              transform: isExpanded
+                                ? "rotate(180deg)"
+                                : "rotate(0deg)",
+                            }}
+                          >
+                            ▼
+                          </span>
+                        </div>
+                        {isExpanded && (
                           <div className="messages-list">
                             {messages.map((msg, index) => (
-                              <div key={index} className="message-card">
-                                <p>
-                                  {msg.message || "Сообщение без текста"} - Это
-                                  сообщения пользователя
-                                </p>
-                                {/* Если есть дата, можно добавить */}
-                                {msg.createdAt && (
-                                  <span className="message-date">
-                                    {new Date(msg.createdAt).toLocaleString(
-                                      "ru-RU",
-                                    )}{" "}
-                                    - это то, когда он написал
-                                  </span>
-                                )}
+                              <div
+                                key={index}
+                                className={`message-card ${msg.sender === "admin" ? "admin-message" : "user-message"}`}
+                              >
+                                <p>{msg.message}</p>
+                                <span className="message-date">
+                                  {new Date(msg.createdAt).toLocaleString(
+                                    "ru-RU",
+                                  )}
+                                </span>
                               </div>
                             ))}
                           </div>
+                        )}
+
+                        <div className="reply-section">
+                          <input
+                            type="text"
+                            placeholder="Ответить..."
+                            value={replyTexts[userId] || ""}
+                            onChange={(e) =>
+                              setReplyTexts((prev) => ({
+                                ...prev,
+                                [userId]: e.target.value,
+                              }))
+                            }
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") handleSendReply(userId);
+                            }}
+                          />
+                          <button
+                            onClick={() => handleSendReply(userId)}
+                            className="send-reply-btn"
+                          >
+                            <svg
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M2 21L21 12L2 3V10L15 12L2 14V21Z"
+                                fill="white"
+                              />
+                            </svg>
+                          </button>
                         </div>
-                      ),
-                    )
-                  )}
-                </div>
+                      </div>
+                    );
+                  },
+                )
               )}
             </div>
           )}
