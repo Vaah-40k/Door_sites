@@ -1,7 +1,7 @@
 // useBasket.js
 import { useState, useEffect } from "react";
 
-const API_BASE = import.meta.env.VITE_BASE_URL_BACKEND;
+const VITE_BASE_URL_BACKEND = import.meta.env.VITE_BASE_URL_BACKEND;
 
 let isRefreshing = false;
 let failedQueue = [];
@@ -23,7 +23,7 @@ const refreshAccessToken = async () => {
     throw new Error("No refresh token");
   }
 
-  const response = await fetch(`${API_BASE}/refresh-token`, {
+  const response = await fetch(`${VITE_BASE_URL_BACKEND}/refresh-token`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ refreshToken }),
@@ -56,7 +56,8 @@ const authFetch = async (url, options = {}) => {
     ...options.headers,
   };
 
-  const makeRequest = () => fetch(`${API_BASE}${url}`, { ...options, headers });
+  const makeRequest = () =>
+    fetch(`${VITE_BASE_URL_BACKEND}${url}`, { ...options, headers });
 
   let response = await makeRequest();
 
@@ -67,7 +68,10 @@ const authFetch = async (url, options = {}) => {
       })
         .then((newToken) => {
           headers.Authorization = `Bearer ${newToken}`;
-          return fetch(`${API_BASE}${url}`, { ...options, headers });
+          return fetch(`${VITE_BASE_URL_BACKEND}${url}`, {
+            ...options,
+            headers,
+          });
         })
         .then((res) => {
           if (!res.ok) {
@@ -82,7 +86,10 @@ const authFetch = async (url, options = {}) => {
     try {
       const newToken = await refreshAccessToken();
       headers.Authorization = `Bearer ${newToken}`;
-      response = await fetch(`${API_BASE}${url}`, { ...options, headers });
+      response = await fetch(`${VITE_BASE_URL_BACKEND}${url}`, {
+        ...options,
+        headers,
+      });
       processQueue(null, newToken);
       isRefreshing = false;
 

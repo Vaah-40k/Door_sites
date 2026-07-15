@@ -4,6 +4,7 @@ const path = require("path");
 const fs = require("fs");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
+const multer = require("multer");
 const dotenv = require("dotenv").config({
   path: path.join(__dirname, "..", "..", ".env"),
 });
@@ -31,6 +32,28 @@ const pathToMainFile = path.join(__dirname, "..", "front", "index.html");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+// ХРАНИЛИЩЕ
+
+const uploadDir = path.join(
+  __dirname,
+  "..",
+  "..",
+  "frontend",
+  "public",
+  "img",
+  "doors",
+);
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, uploadDir),
+  filename: (req, file, cb) => {
+    const unique = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, unique + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({ storage });
 
 app.get("/", (req, res) => {
   res.sendFile(pathToMainFile);
@@ -281,12 +304,10 @@ app.post("/admin/reply", TokenVerifier.protect(), async (req, res) => {
 
     const { ID_User, message } = req.body;
     if (!ID_User || !message) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "ID пользователя и текст обязательны",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "ID пользователя и текст обязательны",
+      });
     }
 
     // Создаём ответ
@@ -317,20 +338,20 @@ app.get("/user-messages", TokenVerifier.protect(), async (req, res) => {
 
     // Сообщения пользователя
     const userMessages = await messageUser.findAll({
-      where: { ID_User: userId }
+      where: { ID_User: userId },
     });
-    const userData = userMessages.map(m => ({
+    const userData = userMessages.map((m) => ({
       ...m.dataValues,
-      sender: 'user'
+      sender: "user",
     }));
 
     // Ответы администратора
     const adminReplies = await AdminReply.findAll({
-      where: { ID_User: userId }
+      where: { ID_User: userId },
     });
-    const adminData = adminReplies.map(m => ({
+    const adminData = adminReplies.map((m) => ({
       ...m.dataValues,
-      sender: 'admin'
+      sender: "admin",
     }));
 
     // Объединяем и сортируем по createdAt (старые сверху)
@@ -339,7 +360,7 @@ app.get("/user-messages", TokenVerifier.protect(), async (req, res) => {
 
     res.status(200).json({
       success: true,
-      messages: allMessages
+      messages: allMessages,
     });
   } catch (err) {
     console.error("Ошибка получения сообщений пользователя:", err);
@@ -350,68 +371,124 @@ app.get("/user-messages", TokenVerifier.protect(), async (req, res) => {
 // КАТАЛОГ
 app.get("/show_cards", async (req, res) => {
   try {
-    const respone = await Cards.findAll();
-    const data = respone.map((item) => item.dataValues);
-    res.status(200).json({ data, seccess: true });
+    const response = await Cards.findAll();
+    const data = response.map((item) => {
+      const raw = item.dataValues;
+      let images = [];
+      try {
+        images = JSON.parse(raw.src_img);
+      } catch {
+        images = [raw.src_img]; // на случай, если старый формат
+      }
+      return { ...raw, images }; // добавляем поле images
+    });
+    res.status(200).json({ data, success: true });
   } catch (err) {
-    console.log("Ошибка отображения каталога");
-    res.status(403).json({ err: err, seccess: false });
+    console.log("Ошибка отображения каталога", err);
+    res.status(403).json({ err, success: false });
   }
 });
 
-app.post("/add_card", TokenVerifier.protect(), async (req, res) => {
-  try {
-    // Проверяем, что пользователь – администратор
-    if (req.user.role !== "administrator") {
-      return res
-        .status(403)
-        .json({ success: false, message: "Доступ запрещён" });
-    }
+app.post(
+  "/add_card",
+  TokenVerifier.protect(),
+  upload.array("images", 10),
+  async (req, res) => {
+    try {
+      if (req.user.role !== "administrator") {
+        return res
+          .status(403)
+          .json({ success: false, message: "Доступ запрещён" });
+      }
 
-    const {
-      src_img,
-      title,
-      price,
-      price_opt,
-      price_small_opt,
-      price_mrc,
-      price_rrc,
-      size,
-      alt,
-    } = req.body;
+      const {
+        title,
+        price,
+        price_opt,
+        price_small_opt,
+        price_mrc,
+        price_rrc,
+        size,
+        alt,
+      } = req.body;
 
-    // Валидация обязательных полей (NOT NULL в БД)
-    if (!title || !price || !size || !alt || !src_img) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Заполните все обязательные поля: src_img, title, price, size, alt",
+      // Валидация обязательных полей
+      if (!title || !price || !size || !alt) {
+        return res.status(400).json({
+          success: false,
+          message: "Заполните все обязательные поля: title, price, size, alt",
+        });
+      }
+
+      // Формируем массив путей к загруженным файлам (относительные пути для фронта)
+      const uploadedFiles = req.files || [];
+      const imagePaths = uploadedFiles.map(
+        (file) => "/img/doors/" + file.filename,
+      );
+
+      // Если ни одного файла не загружено – используем заглушку
+      if (imagePaths.length === 0) {
+        imagePaths.push("/src/assets/cart2.jpg");
+      }
+
+      // Создаём карточку, сохраняя массив как JSON-строку
+      const newCard = await Cards.create({
+        src_img: JSON.stringify(imagePaths),
+        title,
+        price: Number(price),
+        price_opt: price_opt ? Number(price_opt) : null,
+        price_small_opt: price_small_opt ? Number(price_small_opt) : null,
+        price_mrc: price_mrc ? Number(price_mrc) : null,
+        price_rrc: price_rrc ? Number(price_rrc) : null,
+        size,
+        alt,
       });
+
+      res.status(201).json({
+        success: true,
+        message: "Товар добавлен",
+        data: newCard,
+      });
+    } catch (error) {
+      console.error("Ошибка добавления товара:", error);
+      res.status(500).json({ success: false, message: error.message });
     }
+  },
+);
 
-    // Создаём запись в таблице cards
-    const newCard = await Cards.create({
-      src_img,
-      title,
-      price,
-      price_opt: price_opt || null,
-      price_small_opt: price_small_opt || null,
-      price_mrc: price_mrc || null,
-      price_rrc: price_rrc || null,
-      size,
-      alt,
-      // createdAt и updatedAt проставятся автоматически
-    });
-
-    res.status(201).json({
-      success: true,
-      message: "Товар добавлен",
-      data: newCard,
-    });
-  } catch (error) {
-    console.error("Ошибка добавления товара:", error);
-    res.status(500).json({ success: false, message: error.message });
+app.delete("/remove_card", TokenVerifier.protect(), async (req, res) => {
+  const id_tovar = req.headers.id_tovar;
+  if (!id_tovar) {
+    return res.status(405).json({ message: "нет такого товара" });
   }
+
+  // Находим карточку, чтобы получить пути к файлам
+  const card = await Cards.findByPk(id_tovar);
+  if (!card) {
+    return res.status(404).json({ message: "Карточка не найдена" });
+  }
+
+  let images = [];
+  try {
+    images = JSON.parse(card.src_img);
+  } catch {
+    images = [card.src_img];
+  }
+
+  // Удаляем файлы (кроме заглушки)
+  images.forEach((imgPath) => {
+    if (imgPath && !imgPath.includes("cart2.jpg")) {
+      const filePath = path.join(__dirname, "..", "front", "public", imgPath);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    }
+  });
+
+  // Удаляем запись из БД
+  await Cards.destroy({ where: { id_cards: id_tovar } });
+
+  res.status(200).json({ message: "Карточка успешно удалена" });
 });
 // ========== КОРЗИНА ==========
 

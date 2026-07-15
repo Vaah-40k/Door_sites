@@ -589,26 +589,6 @@
   }
 }
 
-/* Кнопка добавления товара */
-.add-product-btn {
-  background: #ff5f2f;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 28px;
-  height: 28px;
-  font-size: 20px;
-  font-weight: bold;
-  line-height: 1;
-  cursor: pointer;
-  margin-right: 10px;
-  transition: 0.2s;
-}
-.add-product-btn:hover {
-  background: #e04e22;
-  transform: scale(1.1);
-}
-
 /* ... существующие стили ... */
 
 /* ===== МОДАЛЬНОЕ ОКНО (улучшенное) ===== */
@@ -888,8 +868,6 @@
   color: white;
   border: none;
   border-radius: 50%;
-  width: 28px;
-  height: 28px;
   font-size: 20px;
   font-weight: bold;
   line-height: 1;

@@ -8,9 +8,7 @@ module.exports = function (sequelize) {
         autoIncrement: true,
         type: DataTypes.INTEGER,
       },
-      src_img: {
-        type: DataTypes.STRING,
-      },
+      src_img: { type: DataTypes.TEXT, allowNull: false, defaultValue: "[]" },
       title: {
         type: DataTypes.STRING,
       },

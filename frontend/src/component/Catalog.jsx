@@ -1,39 +1,28 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Cart_b3 from "./Cart-b3";
 import "../styles/catalog.css";
 import { useBasket } from "../hooks/useBasket";
-
+import { parseJwt } from "../hooks/parseJwt";
 const Catalog = () => {
+  const token = localStorage.getItem("accessToken");
+
   const [filters, setFilters] = useState({
     search: "",
     minPrice: "",
     maxPrice: "",
   });
+  const [roleUser, setRoleUser] = useState();
 
   const { addToBasket } = useBasket();
 
-  const parseJwt = (token) => {
+  const definitionRole = () => {
     try {
-      const base64Url = token.split(".")[1];
-      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-      const jsonPayload = decodeURIComponent(
-        atob(base64)
-          .split("")
-          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-          .join(""),
-      );
-      return JSON.parse(jsonPayload);
-    } catch (e) {
-      return null;
+      const role = parseJwt(token).role;
+      setRoleUser(role);
+    } catch (err) {
+      console.log("Неавторизованные пользователь");
     }
   };
-
-  const token = localStorage.getItem("accessToken");
-
-  const role = parseJwt(token).role;
-  console.log(role);
-  const isAdmin = role === "administrator";
-
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({
@@ -49,6 +38,9 @@ const Catalog = () => {
       maxPrice: "",
     });
   };
+  useEffect(() => {
+    definitionRole();
+  }, [token]);
 
   return (
     <div className="catalog">
@@ -103,7 +95,7 @@ const Catalog = () => {
           <Cart_b3
             filters={filters}
             addToBasket={addToBasket}
-            isAdmin={isAdmin}
+            isAdmin={roleUser === "administrator"}
           />
         </div>
       </div>

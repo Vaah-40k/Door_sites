@@ -1,10 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-
 const Cart_b3 = ({ filters, addToBasket, isAdmin }) => {
+  const token = localStorage.getItem("accessToken");
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [previews, setPreviews] = useState([]);
 
   // Состояния для модального окна добавления товара
   const [showModal, setShowModal] = useState(false);
@@ -19,6 +21,17 @@ const Cart_b3 = ({ filters, addToBasket, isAdmin }) => {
     size: "",
     alt: "",
   });
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length) {
+      setSelectedFiles(files);
+      const urls = files.map((file) => URL.createObjectURL(file));
+      setPreviews(urls);
+    } else {
+      setSelectedFiles([]);
+      setPreviews([]);
+    }
+  };
 
   // Функция загрузки товаров (вынесена для повторного вызова)
   const fetchProducts = async () => {
@@ -32,15 +45,25 @@ const Cart_b3 = ({ filters, addToBasket, isAdmin }) => {
       const alldata = await response.json();
       const productsData = alldata.data;
 
-      const formattedProducts = productsData.map((item, index) => ({
-        id_tovar: item.ID_cards || index,
-        title: item.title,
-        price: item.price,
-        priceFormatted: `${item.price.toLocaleString()} ₽`,
-        image: item.src_img || "/src/assets/cart2.jpg",
-        size: `Размер: ${item.size} мм`,
-        alt: item.alt || item.title,
-      }));
+      const formattedProducts = productsData.map((item) => {
+        let images = [];
+        try {
+          images = JSON.parse(item.src_img);
+        } catch {
+          images = [item.src_img];
+        }
+        const firstImage = images.length ? images[0] : "/src/assets/cart2.jpg";
+        return {
+          id_tovar: item.ID_cards || item.id_cards,
+          title: item.title,
+          price: item.price,
+          priceFormatted: `${item.price.toLocaleString()} ₽`,
+          image: firstImage, // показываем первое изображение
+          images: images, // сохраняем все для возможной галереи
+          size: `Размер: ${item.size} мм`,
+          alt: item.alt || item.title,
+        };
+      });
       setProducts(formattedProducts);
     } catch (error) {
       console.error("Ошибка загрузки товаров:", error);
@@ -48,7 +71,21 @@ const Cart_b3 = ({ filters, addToBasket, isAdmin }) => {
       setLoading(false);
     }
   };
-
+  const removeCards = async (id_tovar) => {
+    const response = await fetch(
+      `${import.meta.env.VITE_BASE_URL_BACKEND}/remove_card`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          id_tovar: id_tovar,
+        },
+      },
+    );
+    alert("Карточка успешно удалена");
+    location.reload();
+  };
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -58,17 +95,20 @@ const Cart_b3 = ({ filters, addToBasket, isAdmin }) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-
   const handleAddProduct = async (e) => {
     e.preventDefault();
 
-    // Валидация обязательных полей
-    const required = ["src_img", "title", "price", "size", "alt"];
+    // Валидация обязательных полей (без src_img, т.к. теперь файлы)
+    const required = ["title", "price", "size", "alt"];
     for (let field of required) {
       if (!formData[field]) {
         alert(`Поле "${field}" обязательно для заполнения`);
         return;
       }
+    }
+    if (selectedFiles.length === 0) {
+      alert("Выберите хотя бы одно изображение");
+      return;
     }
 
     try {
@@ -78,24 +118,41 @@ const Cart_b3 = ({ filters, addToBasket, isAdmin }) => {
         return;
       }
 
+      const data = new FormData();
+      data.append("title", formData.title);
+      data.append("price", Number(formData.price));
+      data.append(
+        "price_opt",
+        formData.price_opt ? Number(formData.price_opt) : "",
+      );
+      data.append(
+        "price_small_opt",
+        formData.price_small_opt ? Number(formData.price_small_opt) : "",
+      );
+      data.append(
+        "price_mrc",
+        formData.price_mrc ? Number(formData.price_mrc) : "",
+      );
+      data.append(
+        "price_rrc",
+        formData.price_rrc ? Number(formData.price_rrc) : "",
+      );
+      data.append("size", formData.size);
+      data.append("alt", formData.alt);
+
+      // Добавляем все файлы с ключом 'images'
+      selectedFiles.forEach((file) => {
+        data.append("images", file);
+      });
+
       const response = await fetch(
         `${import.meta.env.VITE_BASE_URL_BACKEND}/add_card`,
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            ...formData,
-            price: Number(formData.price),
-            price_opt: formData.price_opt ? Number(formData.price_opt) : null,
-            price_small_opt: formData.price_small_opt
-              ? Number(formData.price_small_opt)
-              : null,
-            price_mrc: formData.price_mrc ? Number(formData.price_mrc) : null,
-            price_rrc: formData.price_rrc ? Number(formData.price_rrc) : null,
-          }),
+          body: data,
         },
       );
 
@@ -103,19 +160,11 @@ const Cart_b3 = ({ filters, addToBasket, isAdmin }) => {
       if (result.success) {
         alert("Товар успешно добавлен!");
         setShowModal(false);
-        // Сбрасываем форму (опционально)
         setFormData({
-          src_img: "/img/doors/default.jpg",
-          title: "",
-          price: "",
-          price_opt: "",
-          price_small_opt: "",
-          price_mrc: "",
-          price_rrc: "",
-          size: "",
-          alt: "",
+          /* сброс */
         });
-        // Обновляем список товаров
+        setSelectedFiles([]);
+        setPreviews([]);
         await fetchProducts();
       } else {
         alert(`Ошибка: ${result.message}`);
@@ -125,7 +174,6 @@ const Cart_b3 = ({ filters, addToBasket, isAdmin }) => {
       alert("Произошла ошибка при добавлении товара");
     }
   };
-
   // ===== Навигация в корзину (без изменений) =====
   const handleCartClick = (product) => {
     navigate("/cart", { state: { product } });
@@ -164,7 +212,6 @@ const Cart_b3 = ({ filters, addToBasket, isAdmin }) => {
   if (loading) {
     return <div className="block3">Загрузка товаров...</div>;
   }
-
   return (
     <div className="block3">
       <div className="offer-content">
@@ -177,7 +224,7 @@ const Cart_b3 = ({ filters, addToBasket, isAdmin }) => {
                 onClick={() => setShowModal(true)}
                 title="Добавить товар"
               >
-                +
+                Добавить товар +
               </button>
             )}
             Найдено товаров: {sortedProducts.length}
@@ -192,6 +239,11 @@ const Cart_b3 = ({ filters, addToBasket, isAdmin }) => {
                 className={`cart-item cart-${product.id_tovar}`}
               >
                 <div className="cart-image">
+                  {isAdmin && (
+                    <button onClick={() => removeCards(product.id_tovar)}>
+                      Удалить товар -
+                    </button>
+                  )}
                   <img src={product.image} alt={product.alt} />
                 </div>
                 <div className="cart-info">
@@ -231,15 +283,31 @@ const Cart_b3 = ({ filters, addToBasket, isAdmin }) => {
             <h2>Добавление товара в каталог</h2>
             <form onSubmit={handleAddProduct}>
               <div className="form-group">
-                <label>Изображение (URL) *</label>
+                <label>Изображения (загрузите несколько файлов) *</label>
                 <input
-                  type="text"
-                  name="src_img"
-                  value={formData.src_img}
-                  onChange={handleInputChange}
-                  placeholder="/img/doors/default.jpg"
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleFileChange}
                   required
                 />
+                <div
+                  style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: "10px",
+                    marginTop: "10px",
+                  }}
+                >
+                  {previews.map((url, idx) => (
+                    <img
+                      key={idx}
+                      src={url}
+                      alt={`preview-${idx}`}
+                      style={{ maxWidth: "100px" }}
+                    />
+                  ))}
+                </div>
               </div>
 
               <div className="form-group">

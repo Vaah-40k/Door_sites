@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import "../styles/registration.css";
-
+import { useNavigate } from "react-router-dom";
 const Autorization = () => {
+  const navigate = useNavigate();
   const [authData, setAuthData] = useState({
     email: "",
     password: "",
@@ -50,6 +51,9 @@ const Autorization = () => {
         setAuthMessage(`Добро пожаловать дорогой клиент`);
         setMessageType("success");
         setAuthData({ email: "", password: "" });
+        setInterval(() => {
+          navigate("/account");
+        }, 1000);
       } else {
         setAuthMessage(data.message || "Пользователь не найден");
         setMessageType("error");

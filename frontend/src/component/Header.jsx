@@ -1,6 +1,7 @@
 import Logoimg from "../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { parseJwt } from "../hooks/parseJwt";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -10,7 +11,8 @@ const Header = () => {
   useEffect(() => {
     const checkAuth = () => {
       const token = localStorage.getItem("accessToken");
-      setIsAuthenticated(!!token);
+      const haveToken = parseJwt(token);
+      setIsAuthenticated(Boolean(haveToken));
     };
 
     checkAuth();

@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/account.css";
-
+import { parseJwt } from "../hooks/parseJwt";
 const Account = () => {
   const token = localStorage.getItem("accessToken");
   const navigate = useNavigate();
@@ -56,23 +56,6 @@ const Account = () => {
       image: "/api/placeholder/200/150",
     },
   ]);
-
-  // Функция для декодирования JWT (без библиотеки)
-  const parseJwt = (token) => {
-    try {
-      const base64Url = token.split(".")[1];
-      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-      const jsonPayload = decodeURIComponent(
-        atob(base64)
-          .split("")
-          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-          .join(""),
-      );
-      return JSON.parse(jsonPayload);
-    } catch (e) {
-      return null;
-    }
-  };
 
   // Инициализируем активную вкладку в зависимости от роли
   const [activeTab, setActiveTab] = useState(() => {
@@ -373,6 +356,7 @@ const Account = () => {
       localStorage.removeItem("refreshToken");
       alert("Вы вышли из аккаунта");
       navigate("/");
+      location.reload();
     }
   };
 
