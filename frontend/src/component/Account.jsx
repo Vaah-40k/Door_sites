@@ -18,6 +18,8 @@ const Account = () => {
   const [allMessagesForTheAdministrator, setAllMessagesForTheAdministrator] =
     useState([]);
   const [expandedUsers, setExpandedUsers] = useState({});
+  const [last_state, setLast_state] = useState();
+  const [historiApplication, setHistoriApplication] = useState([]);
 
   // Состояния для профиля
   const [user, setUser] = useState({
@@ -56,7 +58,6 @@ const Account = () => {
       image: "/api/placeholder/200/150",
     },
   ]);
-
   // Инициализируем активную вкладку в зависимости от роли
   const [activeTab, setActiveTab] = useState(() => {
     const token = localStorage.getItem("accessToken");
@@ -175,7 +176,21 @@ const Account = () => {
       setOrders([]);
     }
   };
-
+  const showStateApplication = async (id_application) => {
+    const response = await fetch(
+      `${import.meta.env.VITE_BASE_URL_BACKEND}/show-histori-state-application/${id_application}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    const { last_state, historiApplication } = await response.json();
+    setLast_state(last_state);
+    setHistoriApplication(historiApplication);
+  };
   // Загрузка профиля
   const fetchProfile = async () => {
     if (!token) {
@@ -726,8 +741,23 @@ const Account = () => {
                     <div key={order.id} className="order-card">
                       <div className="order-header">
                         <div>
-                          <span className="order-number">
+                          <span
+                            onClick={() => {
+                              showStateApplication(order.id);
+                            }}
+                            className="order-number"
+                          >
                             Заказ №{order.id}
+                            <select name="orders" id="orders">
+                              <option value="" disabled selected>
+                                {last_state}
+                              </option>
+                              {historiApplication.map((item, index) => (
+                                <option key={index} disabled>
+                                  {item}
+                                </option>
+                              ))}
+                            </select>
                           </span>
                           <span className="order-date">
                             {new Date(order.date).toLocaleDateString("ru-RU")}

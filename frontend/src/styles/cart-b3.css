@@ -1,7 +1,29 @@
 .cart-b3 img {
   width: 20%;
 }
+
 .cart-b3 p {
   font-family: "AdventPro-Regular";
   font-size: 1em;
+}
+
+/* ===== АДАПТИВНОСТЬ ===== */
+@media (max-width: 768px) {
+  .cart-b3 img {
+    width: 30%;
+  }
+
+  .cart-b3 p {
+    font-size: 0.9em;
+  }
+}
+
+@media (max-width: 480px) {
+  .cart-b3 img {
+    width: 40%;
+  }
+
+  .cart-b3 p {
+    font-size: 0.8em;
+  }
 }

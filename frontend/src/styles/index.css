@@ -1,4 +1,36 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
-  margin-left: 10%;
-  margin-right: 10%;
+  font-family: "AdventPro-Regular", sans-serif;
+  margin: 0 10%;
+  overflow-x: hidden;
+}
+
+/* ===== АДАПТИВНОСТЬ ===== */
+@media (max-width: 1024px) {
+  body {
+    margin: 0 5%;
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    margin: 0 3%;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    margin: 0 2%;
+  }
+}
+
+@media (max-width: 360px) {
+  body {
+    margin: 0 1%;
+  }
 }

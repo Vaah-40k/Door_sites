@@ -6,6 +6,7 @@
   font-family: "AdventPro-Regular";
   src: url("../fonts/AdventPro-Regular.ttf");
 }
+
 .registration {
   display: flex;
   justify-content: center;
@@ -16,6 +17,7 @@
   margin-left: -12.5%;
   margin-right: -12.5%;
 }
+
 .reg-content {
   background-color: white;
   border-radius: 10px;
@@ -24,9 +26,10 @@
   width: 50%;
   max-width: 600px;
 }
+
 .reg-content h1 {
   font-family: "AdventPro-Bold";
-  font-size: 2.5em;
+  font-size: clamp(1.8em, 3vw, 2.5em);
   color: #000000;
   text-align: center;
   padding-bottom: 5%;
@@ -34,11 +37,13 @@
   display: inline-block;
   width: 100%;
 }
+
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
+
 .reg-content .row,
 .reg-content .row5,
 .reg-content .row6,
@@ -48,6 +53,7 @@
   justify-content: space-between;
   gap: 20px;
 }
+
 .reg-content label {
   font-family: "AdventPro-Regular";
   font-size: 1.1em;
@@ -55,6 +61,7 @@
   min-width: 150px;
   font-weight: 500;
 }
+
 .reg-content input {
   flex: 1;
   padding: 12px 15px;
@@ -64,19 +71,25 @@
   font-size: 1em;
   transition: all 0.3s ease;
   background-color: #fff;
+  width: 100%;
+  box-sizing: border-box;
 }
+
 .reg-content input:focus {
   outline: none;
   border-color: #ff5f2f;
   box-shadow: 0 0 5px rgba(255, 95, 47, 0.3);
 }
+
 .reg-content input:hover {
   border-color: #ff5f2f;
 }
+
 .reg-content input::placeholder {
   color: #999;
   font-family: "AdventPro-Regular";
 }
+
 .form-btn {
   display: flex;
   flex-direction: column;
@@ -84,17 +97,21 @@
   margin-top: 30px;
   gap: 15px;
 }
+
 .form-btn button {
   border: none;
   background-color: #ff5f2f;
   color: rgb(255, 255, 255);
   font-family: "AdventPro-Bold";
-  font-size: 1.2em;
+  font-size: clamp(1em, 1.3vw, 1.2em);
   padding: 12px 40px;
   cursor: pointer;
   width: auto;
   min-width: 200px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
 }
+
 .form-btn button:hover {
   background-color: #e04e22;
 }
@@ -108,59 +125,40 @@
   text-align: center;
   width: 100%;
 }
-.form-btn p:contains("успешна") {
+
+.form-btn p.success {
   background-color: #d4edda;
   color: #155724;
   border: 1px solid #c3e6cb;
 }
-.form-btn p:contains("не совпадают"),
-.form-btn p:contains("Ошибка") {
+
+.form-btn p.error {
   background-color: #f8d7da;
   color: #721c24;
   border: 1px solid #f5c6cb;
 }
-/* Адаптивность для мобильных устройств */
-@media (max-width: 768px) {
-  .reg-content {
-    width: 90%;
-    padding: 20px;
-  }
 
-  .reg-content .row,
-  .reg-content .row5,
-  .reg-content .row6,
-  .reg-content .row7 {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .reg-content label {
-    min-width: auto;
-  }
-
-  .reg-content input {
-    width: 100%;
-  }
-
-  .form-btn button {
-    width: 100%;
-  }
-}
 .reg-content input[type="tel"] {
   letter-spacing: 1px;
 }
+
 .reg-content input[type="password"] {
   font-family: "AdventPro-Regular";
   letter-spacing: 2px;
 }
+
 .form-btn a {
   cursor: pointer;
+  color: #33cccc;
+  text-decoration: none;
+  transition: color 0.3s ease;
 }
+
 .form-btn a:hover {
-  color: #e04e22;
+  color: #2ba0a0;
+  text-decoration: underline;
 }
-/* Контейнер для поля пароля с кнопкой */
+
 .password-wrapper {
   flex: 1;
   display: flex;
@@ -200,13 +198,147 @@
   display: block;
 }
 
-/* Адаптивность */
+/* ===== АДАПТИВНОСТЬ ===== */
+@media (max-width: 1024px) {
+  .registration {
+    margin-left: -5%;
+    margin-right: -5%;
+  }
+
+  .reg-content {
+    width: 70%;
+    padding: 35px;
+  }
+}
+
 @media (max-width: 768px) {
-  .password-wrapper {
-    width: 100%;
+  .registration {
+    margin-left: -3%;
+    margin-right: -3%;
+    min-height: 60vh;
+    padding: 30px 0;
+  }
+
+  .reg-content {
+    width: 90%;
+    padding: 25px 20px;
+  }
+
+  .reg-content h1 {
+    font-size: 1.6em;
+    padding-bottom: 15px;
+  }
+
+  .reg-content .row,
+  .reg-content .row5,
+  .reg-content .row6,
+  .reg-content .row7 {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .reg-content label {
+    min-width: auto;
+    font-size: 0.95em;
+  }
+
+  .reg-content input {
+    padding: 10px 14px;
+    font-size: 0.95em;
+  }
+
+  .form-btn {
+    margin-top: 20px;
+  }
+
+  .form-btn button {
+    min-width: 150px;
+    padding: 10px 30px;
+    font-size: 1em;
+  }
+}
+
+@media (max-width: 480px) {
+  .registration {
+    margin-left: -2%;
+    margin-right: -2%;
+    min-height: 50vh;
+    padding: 20px 0;
+  }
+
+  .reg-content {
+    width: 95%;
+    padding: 20px 15px;
+    border-radius: 8px;
+  }
+
+  .reg-content h1 {
+    font-size: 1.3em;
+    padding-bottom: 12px;
+  }
+
+  .reg-content label {
+    font-size: 0.85em;
+  }
+
+  .reg-content input {
+    padding: 8px 12px;
+    font-size: 0.85em;
+  }
+
+  .form-btn {
+    margin-top: 15px;
+    gap: 10px;
+  }
+
+  .form-btn button {
+    min-width: 120px;
+    padding: 8px 20px;
+    font-size: 0.9em;
+  }
+
+  .form-btn p {
+    font-size: 0.8em;
+    padding: 8px;
+  }
+
+  .password-wrapper input {
+    padding-right: 38px;
   }
 
   .password-toggle-btn {
-    right: 10px;
+    right: 8px;
+    padding: 2px;
+  }
+
+  .password-toggle-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@media (max-width: 360px) {
+  .reg-content {
+    padding: 15px 10px;
+  }
+
+  .reg-content h1 {
+    font-size: 1.1em;
+  }
+
+  .reg-content label {
+    font-size: 0.8em;
+  }
+
+  .reg-content input {
+    padding: 6px 10px;
+    font-size: 0.8em;
+  }
+
+  .form-btn button {
+    min-width: 100px;
+    padding: 8px 15px;
+    font-size: 0.85em;
   }
 }

@@ -15,6 +15,9 @@ const Cards = require("./modules/cards")(sequelize);
 const application = require("./modules/application")(sequelize);
 const administrator = require("./modules/administrators")(sequelize);
 const AdminReply = require("./modules/AdminReply")(sequelize);
+const historiStateApplication = require("./modules/histori_state_application")(
+  sequelize,
+);
 module.exports = {
   User,
   AllDoor,
@@ -26,4 +29,5 @@ module.exports = {
   application,
   administrator,
   AdminReply,
+  historiStateApplication,
 };

@@ -292,6 +292,12 @@ export const useBasket = () => {
 
     try {
       setError(null);
+      const adress = prompt("Введите адрес доставки");
+      console.log(adress);
+      if (!adress) {
+        alert("Введите адерс доставки");
+        return;
+      }
       const selectedItems = basketItems
         .filter((item) => selectedMap[item.id_basket])
         .map((item) => ({
@@ -302,6 +308,7 @@ export const useBasket = () => {
           title: item.title,
           size: item.size,
           src_img: item.src_img,
+          adress,
         }));
 
       await authFetch("/application-create", {

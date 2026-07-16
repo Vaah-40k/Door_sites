@@ -46,9 +46,16 @@ const Catalog = () => {
     <div className="catalog">
       <div className="catalog-content">
         <div className="filter">
-          {/* Фильтры без изменений */}
           <div className="filter-content">
             <h1>Фильтр</h1>
+            <div className="filter-group">
+              <label>Поиск по категории:</label>
+              <input
+                name="category"
+                placeholder="Выберите категорию..."
+                className="filter-input"
+              ></input>
+            </div>
             <div className="filter-group">
               <label>Поиск по названию:</label>
               <input

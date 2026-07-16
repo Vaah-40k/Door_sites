@@ -25,6 +25,7 @@ const {
   application,
   administrator,
   AdminReply,
+  historiStateApplication,
 } = require("./bd/indexdb");
 const { where } = require("sequelize");
 
@@ -45,15 +46,11 @@ const uploadDir = path.join(
   "doors",
 );
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadDir),
-  filename: (req, file, cb) => {
-    const unique = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, unique + path.extname(file.originalname));
-  },
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage,
+  limits: { files: 4 },
 });
-
-const upload = multer({ storage });
 
 app.get("/", (req, res) => {
   res.sendFile(pathToMainFile);
@@ -392,7 +389,7 @@ app.get("/show_cards", async (req, res) => {
 app.post(
   "/add_card",
   TokenVerifier.protect(),
-  upload.array("images", 10),
+  upload.array("images", 4), // максимум 4 файла
   async (req, res) => {
     try {
       if (req.user.role !== "administrator") {
@@ -412,7 +409,7 @@ app.post(
         alt,
       } = req.body;
 
-      // Валидация обязательных полей
+      // Валидация
       if (!title || !price || !size || !alt) {
         return res.status(400).json({
           success: false,
@@ -420,20 +417,17 @@ app.post(
         });
       }
 
-      // Формируем массив путей к загруженным файлам (относительные пути для фронта)
-      const uploadedFiles = req.files || [];
-      const imagePaths = uploadedFiles.map(
-        (file) => "/img/doors/" + file.filename,
-      );
-
-      // Если ни одного файла не загружено – используем заглушку
-      if (imagePaths.length === 0) {
-        imagePaths.push("/src/assets/cart2.jpg");
+      const files = req.files || [];
+      if (files.length === 0) {
+        return res.status(400).json({
+          success: false,
+          message: "Загрузите хотя бы одно изображение",
+        });
       }
 
-      // Создаём карточку, сохраняя массив как JSON-строку
+      // 1. Создаём запись в БД с временным src_img
       const newCard = await Cards.create({
-        src_img: JSON.stringify(imagePaths),
+        src_img: JSON.stringify(["/src/assets/cart2.jpg"]), // временная заглушка
         title,
         price: Number(price),
         price_opt: price_opt ? Number(price_opt) : null,
@@ -442,6 +436,30 @@ app.post(
         price_rrc: price_rrc ? Number(price_rrc) : null,
         size,
         alt,
+      });
+
+      const cardId = newCard.dataValues.ID_cards; // получаем ID
+      console.log(newCard);
+      // 2. Создаём папку с именем ID карточки
+      const folderPath = path.join(uploadDir, String(cardId));
+      if (!fs.existsSync(folderPath)) {
+        fs.mkdirSync(folderPath, { recursive: true });
+      }
+
+      // 3. Сохраняем файлы с именами 1,2,3,4
+      const savedPaths = [];
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const ext = path.extname(file.originalname); // например, .jpg
+        const filename = `${i + 1}${ext}`; // 1.jpg, 2.png, ...
+        const filePath = path.join(folderPath, filename);
+        fs.writeFileSync(filePath, file.buffer);
+        savedPaths.push(`/img/doors/${cardId}/${filename}`);
+      }
+
+      // 4. Обновляем запись в БД
+      await newCard.update({
+        src_img: JSON.stringify(savedPaths),
       });
 
       res.status(201).json({
@@ -456,40 +474,30 @@ app.post(
   },
 );
 
+// Удаление товара – удаляем папку по ID
 app.delete("/remove_card", TokenVerifier.protect(), async (req, res) => {
   const id_tovar = req.headers.id_tovar;
   if (!id_tovar) {
-    return res.status(405).json({ message: "нет такого товара" });
+    return res.status(400).json({ message: "нет такого товара" });
   }
 
-  // Находим карточку, чтобы получить пути к файлам
   const card = await Cards.findByPk(id_tovar);
   if (!card) {
     return res.status(404).json({ message: "Карточка не найдена" });
   }
 
-  let images = [];
-  try {
-    images = JSON.parse(card.src_img);
-  } catch {
-    images = [card.src_img];
+  // Удаляем папку с ID карточки
+  const folderPath = path.join(uploadDir, String(id_tovar));
+  if (fs.existsSync(folderPath)) {
+    fs.rmSync(folderPath, { recursive: true, force: true });
+    console.log(`Удалена папка: ${folderPath}`);
   }
 
-  // Удаляем файлы (кроме заглушки)
-  images.forEach((imgPath) => {
-    if (imgPath && !imgPath.includes("cart2.jpg")) {
-      const filePath = path.join(__dirname, "..", "front", "public", imgPath);
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-      }
-    }
-  });
-
-  // Удаляем запись из БД
   await Cards.destroy({ where: { id_cards: id_tovar } });
 
   res.status(200).json({ message: "Карточка успешно удалена" });
 });
+
 // ========== КОРЗИНА ==========
 
 // Добавление товара в корзину (авторизованный пользователь)
@@ -672,7 +680,8 @@ app.post("/application-create", TokenVerifier.protect(), async (req, res) => {
       const { id_user, Id_tovar } = await basket.findByPk(item.id_basket);
       delete item.id_basket;
       delete item.selected;
-      const { quantity, price, full_price, title, size, src_img } = item;
+      const { quantity, price, full_price, title, size, src_img, adress } =
+        item;
       const lastIDApplication = await application.findOne({
         order: [["id_application", "DESC"]],
       });
@@ -688,9 +697,46 @@ app.post("/application-create", TokenVerifier.protect(), async (req, res) => {
         title,
         size,
         src_img,
+        adress,
         status: "в Обработке",
       });
     });
+    const lastIDApplication = await application.findOne({
+      order: [["id_application", "DESC"]],
+    });
+    const { adress } = items;
+    const id_group_application =
+      lastIDApplication.dataValues.id_group_application + 1;
+    const defaultHistoriStatusApplication = async () => {
+      await historiStateApplication.create({
+        id_group_application,
+        state_fortexs_DV: "Сборка заказа на складе Фортекс ДВ (Владивосток)",
+        state_flagmen_DV: "-",
+        state: "Сборка",
+      });
+
+      await historiStateApplication.create({
+        id_group_application,
+        state_fortexs_DV: "Заказ передан транспортной компании Флагмен ДВ",
+        state_flagmen_DV: "Заказ принят, отправка из Владивостока",
+        state: "Отправка",
+      });
+
+      await historiStateApplication.create({
+        id_group_application,
+        state_fortexs_DV: "-",
+        state_flagmen_DV: "Транзит через Хабаровск (промежуточный узел)",
+        state: "В пути",
+      });
+
+      await historiStateApplication.create({
+        id_group_application,
+        state_fortexs_DV: "-",
+        state_flagmen_DV: `Доставлен в ${adress} || Доставлен в пункт назначения `,
+        state: "Доставлен",
+      });
+    };
+    defaultHistoriStatusApplication();
     res.status(200).json({ success: true });
   } catch (err) {
     console.log("Ошибка добавления товара в корзину ", err);
@@ -740,7 +786,35 @@ app.delete("/application-destroy/:id_application", async (req, res) => {
     });
   }
 });
-
+app.get(
+  "/show-histori-state-application/:id_group_application",
+  async (req, res) => {
+    try {
+      const { id_group_application } = req.params;
+      const data = await historiStateApplication.findAll({
+        where: {
+          id_group_application: id_group_application,
+        },
+        raw: true,
+      });
+      let historiApplication = [];
+      const last_state = data[data.length - 1].state;
+      for (let i = 0; i < data.length; ++i) {
+        if (data[i].state_fortexs_DV !== "-") {
+          historiApplication.push(data[i].state_fortexs_DV);
+        } else if (data[i].state_flagmen_DV !== "-") {
+          historiApplication.push(data[i].state_flagmen_DV);
+        }
+      }
+      res.status(200).json({ seccess: true, last_state, historiApplication });
+      co;
+    } catch (err) {
+      console.log(err);
+      res.status(404).json({ message: "История данного заказа отсутсвует" });
+    }
+    res.end();
+  },
+);
 // Выход
 app.post("/logout", (req, res) => {
   res.json({ success: true, message: "Выход выполнен" });

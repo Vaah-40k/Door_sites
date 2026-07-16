@@ -12,7 +12,6 @@
   gap: 30px;
 }
 
-/* Боковое меню */
 .account-sidebar {
   width: 280px;
   flex-shrink: 0;
@@ -55,6 +54,7 @@
   margin: 0;
   font-size: 0.85em;
   opacity: 0.9;
+  word-break: break-all;
 }
 
 .account-nav {
@@ -105,13 +105,13 @@
   background: #fff0eb !important;
 }
 
-/* Основной контент */
 .account-content {
   flex: 1;
   background: white;
   border-radius: 15px;
   padding: 30px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
 }
 
 .section-header {
@@ -121,11 +121,13 @@
   margin-bottom: 30px;
   padding-bottom: 15px;
   border-bottom: 2px solid #eee;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .section-header h2 {
   font-family: "AdventPro-Bold", sans-serif;
-  font-size: 1.8em;
+  font-size: clamp(1.3em, 2vw, 1.8em);
   color: #333;
   margin: 0;
 }
@@ -146,7 +148,6 @@
   color: white;
 }
 
-/* Профиль */
 .profile-info {
   display: flex;
   flex-direction: column;
@@ -157,18 +158,22 @@
   display: flex;
   padding: 12px 0;
   border-bottom: 1px solid #f0f0f0;
+  flex-wrap: wrap;
+  gap: 5px;
 }
 
 .info-label {
   width: 150px;
   font-family: "AdventPro-Bold", sans-serif;
   color: #666;
+  flex-shrink: 0;
 }
 
 .info-value {
   font-family: "AdventPro-Regular", sans-serif;
   color: #333;
   flex: 1;
+  word-break: break-all;
 }
 
 .profile-form {
@@ -197,6 +202,8 @@
   font-family: "AdventPro-Regular", sans-serif;
   font-size: 1em;
   transition: border-color 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .form-group input:focus,
@@ -205,20 +212,11 @@
   border-color: #33cccc;
 }
 
-.form-group input:disabled {
-  background: #f5f5f5;
-  color: #999;
-}
-
-.form-group small {
-  color: #999;
-  font-size: 0.75em;
-}
-
 .form-actions {
   display: flex;
   gap: 15px;
   margin-top: 10px;
+  flex-wrap: wrap;
 }
 
 .save-btn {
@@ -251,7 +249,6 @@
   background: #ddd;
 }
 
-/* Заказы */
 .orders-list {
   display: flex;
   flex-direction: column;
@@ -276,6 +273,8 @@
   padding: 15px 20px;
   background: #fafafa;
   border-bottom: 1px solid #eee;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .order-number {
@@ -306,6 +305,7 @@
   gap: 15px;
   padding: 10px 0;
   border-bottom: 1px solid #f5f5f5;
+  flex-wrap: wrap;
 }
 
 .order-item:last-child {
@@ -318,10 +318,12 @@
   object-fit: cover;
   border-radius: 8px;
   background: #f5f5f5;
+  flex-shrink: 0;
 }
 
 .order-item-info {
   flex: 1;
+  min-width: 100px;
 }
 
 .order-item-info h4 {
@@ -340,6 +342,7 @@
 .order-item-price {
   font-family: "AdventPro-Bold", sans-serif;
   color: #ff5f2f;
+  flex-shrink: 0;
 }
 
 .order-footer {
@@ -349,6 +352,8 @@
   padding: 15px 20px;
   background: #fafafa;
   border-top: 1px solid #eee;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .order-total {
@@ -394,7 +399,6 @@
   color: white;
 }
 
-/* Избранное */
 .favorites-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -474,43 +478,7 @@
   border-color: #ff5f2f;
 }
 
-/* Empty state */
-.empty-state {
-  text-align: center;
-  padding: 60px 20px;
-}
-
-.empty-state p {
-  font-family: "AdventPro-Regular", sans-serif;
-  font-size: 1.1em;
-  color: #999;
-  margin-bottom: 20px;
-}
-
-.catalog-btn {
-  background: #ff5f2f;
-  color: white;
-  border: none;
-  padding: 12px 30px;
-  border-radius: 25px;
-  font-family: "AdventPro-Bold", sans-serif;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.catalog-btn:hover {
-  background: #e04e22;
-}
-
-.account-loading {
-  text-align: center;
-  padding: 100px;
-  font-family: "AdventPro-Regular", sans-serif;
-  font-size: 1.2em;
-  color: #999;
-}
-
-/* ===== Сообщения пользователей (для администратора) ===== */
+/* ===== Сообщения ===== */
 .messages-section {
   padding: 0 0 10px 0;
 }
@@ -534,11 +502,6 @@
   display: flex;
   align-items: center;
   gap: 10px;
-}
-
-.user-messages-group h3::before {
-  content: "👤";
-  font-size: 1.2em;
 }
 
 .messages-list {
@@ -580,81 +543,6 @@
   border-top: 1px dashed #f0f0f0;
 }
 
-/* Адаптивность */
-@media (max-width: 768px) {
-  .account-container {
-    flex-direction: column;
-  }
-
-  .account-sidebar {
-    width: 100%;
-  }
-
-  .account-content {
-    padding: 20px;
-  }
-
-  .section-header {
-    flex-direction: column;
-    gap: 15px;
-    align-items: flex-start;
-  }
-
-  .info-row {
-    flex-direction: column;
-    gap: 5px;
-  }
-
-  .info-label {
-    width: auto;
-  }
-
-  .order-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .order-footer {
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  .favorites-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .user-messages-group h3 {
-    font-size: 1em;
-    padding: 12px 16px;
-  }
-
-  .messages-list {
-    padding: 12px 16px;
-  }
-
-  .message-card {
-    padding: 14px 16px;
-  }
-}
-
-.error-input {
-  border: 1px solid red;
-}
-
-.error-message {
-  color: red;
-  font-size: 12px;
-  margin-top: 4px;
-}
-
-.messages-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 10px 0;
-}
-
 .admin-message {
   background: white;
   border-radius: 10px;
@@ -662,27 +550,8 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
   border-right: 4px solid #ff5f2f;
   border-left: none;
-
-  transition: box-shadow 0.2s ease;
-}
-.admin-chat-message{
-  align-items: flex-start;
 }
 
-.message-card p {
-  margin: 0 0 4px 0;
-  font-size: 0.95em;
-}
-
-.message-card .message-date {
-  font-size: 0.7em;
-  opacity: 0.8;
-  display: block;
-  text-align: right;
-  margin-top: 4px;
-}
-
-/* Поле ввода и кнопка */
 .reply-section {
   display: flex;
   align-items: center;
@@ -700,6 +569,7 @@
   font-family: inherit;
   font-size: 0.95em;
   transition: border-color 0.3s;
+  min-width: 50px;
 }
 
 .reply-section input:focus {
@@ -720,6 +590,7 @@
   transition:
     background 0.3s,
     transform 0.2s;
+  flex-shrink: 0;
 }
 
 .send-reply-btn:hover {
@@ -727,16 +598,249 @@
   transform: scale(1.05);
 }
 
-.send-reply-btn:active {
-  transform: scale(0.95);
+.error-input {
+  border: 1px solid red !important;
 }
-@media (max-width: 768px) {
-  .reply-section {
-    padding: 10px 16px;
+
+.error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* ===== АДАПТИВНОСТЬ ===== */
+@media (max-width: 1024px) {
+  .account-container {
+    gap: 20px;
   }
-  .reply-section input {
+
+  .account-sidebar {
+    width: 240px;
+  }
+}
+
+@media (max-width: 768px) {
+  .account {
+    padding: 20px 0;
+  }
+
+  .account-container {
+    flex-direction: column;
+    padding: 0 15px;
+    gap: 20px;
+  }
+
+  .account-sidebar {
+    width: 100%;
+  }
+
+  .account-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 10px;
+    gap: 5px;
+  }
+
+  .account-nav button {
+    padding: 12px 15px;
+    font-size: 0.9em;
+    border-radius: 8px;
+    justify-content: center;
+  }
+
+  .logout-btn {
+    grid-column: 1 / -1;
+    margin-top: 5px;
+  }
+
+  .account-content {
+    padding: 20px;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .section-header h2 {
+    font-size: 1.3em;
+  }
+
+  .info-label {
+    width: 100%;
+  }
+
+  .favorites-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+
+  .order-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .order-date {
+    margin-left: 0;
+  }
+
+  .order-footer {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+
+  .cancel-order-btn,
+  .repeat-order-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .account {
+    padding: 10px 0;
+  }
+
+  .account-container {
+    padding: 0 5px;
+    gap: 15px;
+  }
+
+  .account-content {
+    padding: 15px;
+  }
+
+  .account-nav {
+    grid-template-columns: 1fr;
+  }
+
+  .account-nav button {
+    padding: 10px 12px;
+    font-size: 0.85em;
+  }
+
+  .user-avatar {
+    padding: 20px 15px;
+  }
+
+  .avatar-placeholder {
+    width: 60px;
+    height: 60px;
+    font-size: 28px;
+  }
+
+  .user-avatar h3 {
+    font-size: 1em;
+  }
+
+  .user-avatar p {
+    font-size: 0.75em;
+  }
+
+  .section-header h2 {
+    font-size: 1.1em;
+  }
+
+  .edit-btn {
+    padding: 6px 15px;
+    font-size: 0.85em;
+  }
+
+  .profile-form {
+    gap: 15px;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    padding: 10px;
     font-size: 0.9em;
   }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .save-btn,
+  .cancel-btn {
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+  }
+
+  .favorites-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+
+  .favorite-card img {
+    height: 130px;
+  }
+
+  .favorite-info {
+    padding: 10px;
+  }
+
+  .favorite-info h4 {
+    font-size: 0.85em;
+  }
+
+  .favorite-price {
+    font-size: 0.95em;
+  }
+
+  .favorite-actions {
+    flex-direction: column;
+  }
+
+  .order-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .order-item img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+  }
+
+  .order-item-price {
+    align-self: flex-end;
+  }
+
+  .order-items {
+    padding: 10px 15px;
+  }
+
+  .order-header {
+    padding: 10px 15px;
+  }
+
+  .order-footer {
+    padding: 10px 15px;
+  }
+
+  .messages-list {
+    padding: 10px 15px;
+  }
+
+  .message-card {
+    padding: 12px 15px;
+  }
+
+  .message-card p {
+    font-size: 0.9em;
+  }
+
+  .reply-section {
+    padding: 10px 15px;
+    flex-wrap: wrap;
+  }
+
+  .reply-section input {
+    font-size: 0.85em;
+    padding: 8px 12px;
+  }
+
   .send-reply-btn {
     width: 38px;
     height: 38px;

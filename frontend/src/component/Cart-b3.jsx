@@ -1,5 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+
+const MAX_IMAGES = 4;
+
 const Cart_b3 = ({ filters, addToBasket, isAdmin }) => {
   const token = localStorage.getItem("accessToken");
   const navigate = useNavigate();
@@ -21,16 +24,30 @@ const Cart_b3 = ({ filters, addToBasket, isAdmin }) => {
     size: "",
     alt: "",
   });
+
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
-    if (files.length) {
-      setSelectedFiles(files);
-      const urls = files.map((file) => URL.createObjectURL(file));
-      setPreviews(urls);
-    } else {
-      setSelectedFiles([]);
-      setPreviews([]);
+    if (files.length === 0) return;
+
+    // Проверка на превышение лимита
+    if (selectedFiles.length + files.length > MAX_IMAGES) {
+      alert(`Можно загрузить не более ${MAX_IMAGES} изображений`);
+      e.target.value = ""; // очищаем input
+      return;
     }
+
+    setSelectedFiles((prev) => [...prev, ...files]);
+    const urls = files.map((file) => URL.createObjectURL(file));
+    setPreviews((prev) => [...prev, ...urls]);
+    e.target.value = "";
+  };
+
+  const removePreview = (index) => {
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
+    setPreviews((prev) => {
+      URL.revokeObjectURL(prev[index]);
+      return prev.filter((_, i) => i !== index);
+    });
   };
 
   // Функция загрузки товаров (вынесена для повторного вызова)
@@ -58,8 +75,8 @@ const Cart_b3 = ({ filters, addToBasket, isAdmin }) => {
           title: item.title,
           price: item.price,
           priceFormatted: `${item.price.toLocaleString()} ₽`,
-          image: firstImage, // показываем первое изображение
-          images: images, // сохраняем все для возможной галереи
+          image: firstImage,
+          images: images,
           size: `Размер: ${item.size} мм`,
           alt: item.alt || item.title,
         };
@@ -71,21 +88,25 @@ const Cart_b3 = ({ filters, addToBasket, isAdmin }) => {
       setLoading(false);
     }
   };
+
   const removeCards = async (id_tovar) => {
-    const response = await fetch(
-      `${import.meta.env.VITE_BASE_URL_BACKEND}/remove_card`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-          id_tovar: id_tovar,
+    if (confirm("Вы точно хотите удалить карточку? ")) {
+      const response = await fetch(
+        `${import.meta.env.VITE_BASE_URL_BACKEND}/remove_card`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+            id_tovar: id_tovar,
+          },
         },
-      },
-    );
-    alert("Карточка успешно удалена");
-    location.reload();
+      );
+      alert("Карточка успешно удалена");
+      location.reload();
+    }
   };
+
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -95,10 +116,11 @@ const Cart_b3 = ({ filters, addToBasket, isAdmin }) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
   const handleAddProduct = async (e) => {
     e.preventDefault();
 
-    // Валидация обязательных полей (без src_img, т.к. теперь файлы)
+    // Валидация обязательных полей
     const required = ["title", "price", "size", "alt"];
     for (let field of required) {
       if (!formData[field]) {
@@ -108,6 +130,10 @@ const Cart_b3 = ({ filters, addToBasket, isAdmin }) => {
     }
     if (selectedFiles.length === 0) {
       alert("Выберите хотя бы одно изображение");
+      return;
+    }
+    if (selectedFiles.length > MAX_IMAGES) {
+      alert(`Нельзя загрузить более ${MAX_IMAGES} изображений`);
       return;
     }
 
@@ -140,7 +166,6 @@ const Cart_b3 = ({ filters, addToBasket, isAdmin }) => {
       data.append("size", formData.size);
       data.append("alt", formData.alt);
 
-      // Добавляем все файлы с ключом 'images'
       selectedFiles.forEach((file) => {
         data.append("images", file);
       });
@@ -161,7 +186,15 @@ const Cart_b3 = ({ filters, addToBasket, isAdmin }) => {
         alert("Товар успешно добавлен!");
         setShowModal(false);
         setFormData({
-          /* сброс */
+          src_img: "/src/assets/cart2.jpg",
+          title: "",
+          price: "",
+          price_opt: "",
+          price_small_opt: "",
+          price_mrc: "",
+          price_rrc: "",
+          size: "",
+          alt: "",
         });
         setSelectedFiles([]);
         setPreviews([]);
@@ -174,7 +207,8 @@ const Cart_b3 = ({ filters, addToBasket, isAdmin }) => {
       alert("Произошла ошибка при добавлении товара");
     }
   };
-  // ===== Навигация в корзину (без изменений) =====
+
+  // ===== Навигация в корзину =====
   const handleCartClick = (product) => {
     navigate("/cart", { state: { product } });
   };
@@ -188,7 +222,7 @@ const Cart_b3 = ({ filters, addToBasket, isAdmin }) => {
     }
   };
 
-  // Фильтрация и сортировка (без изменений)
+  // Фильтрация и сортировка
   const filteredProducts = products.filter((product) => {
     const matchesSearch = product.title
       .toLowerCase()
@@ -212,12 +246,12 @@ const Cart_b3 = ({ filters, addToBasket, isAdmin }) => {
   if (loading) {
     return <div className="block3">Загрузка товаров...</div>;
   }
+
   return (
     <div className="block3">
       <div className="offer-content">
         <div className="carts-header">
           <p className="products-count">
-            {/* Если администратор, показываем кнопку "+" */}
             {isAdmin && (
               <button
                 className="add-product-btn"
@@ -240,7 +274,10 @@ const Cart_b3 = ({ filters, addToBasket, isAdmin }) => {
               >
                 <div className="cart-image">
                   {isAdmin && (
-                    <button onClick={() => removeCards(product.id_tovar)}>
+                    <button
+                      className="delete-btn"
+                      onClick={() => removeCards(product.id_tovar)}
+                    >
                       Удалить товар -
                     </button>
                   )}
@@ -283,14 +320,27 @@ const Cart_b3 = ({ filters, addToBasket, isAdmin }) => {
             <h2>Добавление товара в каталог</h2>
             <form onSubmit={handleAddProduct}>
               <div className="form-group">
-                <label>Изображения (загрузите несколько файлов) *</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={handleFileChange}
-                  required
-                />
+                <label>
+                  Изображения (загрузите несколько файлов) *
+                  <span style={{ marginLeft: "10px", fontWeight: "normal" }}>
+                    (максимум {MAX_IMAGES})
+                  </span>
+                </label>
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
+                >
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleFileChange}
+                    required={selectedFiles.length === 0}
+                    disabled={selectedFiles.length >= MAX_IMAGES}
+                  />
+                  <span>
+                    Загружено {selectedFiles.length} из {MAX_IMAGES}
+                  </span>
+                </div>
                 <div
                   style={{
                     display: "flex",
@@ -300,12 +350,33 @@ const Cart_b3 = ({ filters, addToBasket, isAdmin }) => {
                   }}
                 >
                   {previews.map((url, idx) => (
-                    <img
-                      key={idx}
-                      src={url}
-                      alt={`preview-${idx}`}
-                      style={{ maxWidth: "100px" }}
-                    />
+                    <div key={idx} style={{ position: "relative" }}>
+                      <img
+                        src={url}
+                        alt={`preview-${idx}`}
+                        style={{ maxWidth: "100px" }}
+                      />
+                      <button
+                        type="button"
+                        style={{
+                          position: "absolute",
+                          top: "-8px",
+                          right: "-8px",
+                          background: "red",
+                          color: "white",
+                          border: "none",
+                          borderRadius: "50%",
+                          width: "20px",
+                          height: "20px",
+                          cursor: "pointer",
+                          lineHeight: "1",
+                          fontSize: "14px",
+                        }}
+                        onClick={() => removePreview(idx)}
+                      >
+                        ×
+                      </button>
+                    </div>
                   ))}
                 </div>
               </div>

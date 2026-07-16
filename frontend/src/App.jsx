@@ -14,7 +14,6 @@ import Catalog from "./component/Catalog";
 import Cart from "./component/Cart";
 import Account from "./component/Account";
 import Basket from "./component/Basket";
-import "./styles/adaptiv.css";
 import ModalMessageUser from "./component/modalMessageUser";
 function App() {
   return (

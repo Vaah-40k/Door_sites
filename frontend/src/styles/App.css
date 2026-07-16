@@ -6,30 +6,51 @@
   font-family: "AdventPro-Regular";
   src: url("../fonts/AdventPro-Regular.ttf");
 }
-/* Шапка */
+
+/* ===== БАЗОВЫЕ СТИЛИ ===== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  padding: 0 10%;
+  overflow-x: hidden;
+}
+
+/* ===== ШАПКА ===== */
 .header {
   height: 10vh;
+  min-height: 70px;
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
   align-items: center;
   font-family: "AdventPro-Bold";
+  gap: 10px;
+  padding: 0 5px;
 }
 
 .logo {
   height: 10vh;
-  width: 70%;
+  min-height: 60px;
+  width: 100%;
+  max-width: 200px;
 }
 .logo img {
   height: 100%;
   width: 100%;
+  object-fit: contain;
 }
 
 .nav-head {
-  justify-content: center;
   display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 30px;
+  gap: 20px;
   flex: 1;
+  flex-wrap: wrap;
 }
 
 .nav-head a {
@@ -38,7 +59,7 @@
   font-size: 1em;
   transition: color 0.3s ease;
   white-space: nowrap;
-  padding-right: 2%;
+  padding: 5px 10px;
 }
 
 .nav-head a:hover {
@@ -47,85 +68,56 @@
 
 .header-btn {
   flex-shrink: 0;
-  margin-left: auto;
+  justify-self: end;
 }
 
 .header-btn button {
   border: none;
   background-color: #ff5f2f;
   color: rgb(255, 255, 255);
-  padding: 10px 35px;
+  padding: 10px 25px;
   font-family: "AdventPro-Bold";
-  font-size: 1.2em;
+  font-size: 1em;
   cursor: pointer;
   white-space: nowrap;
-  border-radius: 8px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
 }
 
 .header-btn button:hover {
   background-color: #e04e22;
 }
 
-/* Адаптив для маленьких экранов */
-@media (max-width: 1024px) {
-  .header {
-    gap: 15px;
-    flex-wrap: wrap;
-  }
-
-  .nav-head {
-    gap: 15px;
-    margin-left: 15px;
-  }
-}
-
-@media (max-width: 768px) {
-  .header {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-  }
-
-  .logo {
-    justify-content: center;
-  }
-
-  .nav-head {
-    justify-content: center;
-    margin-left: 0;
-    flex-wrap: wrap;
-  }
-
-  .header-btn {
-    margin-left: 0;
-    text-align: center;
-  }
-}
-/* Главная блок 1 */
+/* ===== БЛОК 1 ===== */
 .content-block1 {
   position: relative;
   display: grid;
   grid-template-columns: 1.4fr 1fr;
   background-color: #33cccc;
   margin-top: 2%;
-  padding-bottom: 2%;
+  padding: 40px 30px;
+  min-height: 400px;
+  overflow: hidden;
 }
+
 .text-b1 {
   color: rgb(255, 255, 255);
-  margin-left: 5%;
+  z-index: 2;
+  position: relative;
 }
+
 .text-b1 h1 {
   font-family: "AdventPro-Bold";
-  font-size: 3em;
+  font-size: clamp(1.8em, 4vw, 3em);
+  line-height: 1.2;
 }
+
 .content-block1 p {
   font-family: "AdventPro-Regular";
-  font-size: 1.5em;
+  font-size: clamp(1em, 1.8vw, 1.5em);
+  line-height: 1.4;
 }
-.b1-img img {
-  width: 100%;
-  height: 100%;
-}
+
 .b1-img {
   position: absolute;
   top: 0;
@@ -133,59 +125,65 @@
   width: 45%;
   height: 100%;
 }
+
+.b1-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .btn-b1 button {
   border: none;
   background-color: #ff5f2f;
   color: rgb(255, 255, 255);
   font-family: "AdventPro-Bold";
-  width: 30%;
+  width: clamp(150px, 30%, 250px);
   border-radius: 8px;
-  text-align: start;
-  padding: 2% 2% 2% 2%;
-  font-size: 1em;
+  padding: 12px 20px;
+  font-size: clamp(0.9em, 1.2vw, 1.2em);
   cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 5%;
 }
 .btn-b1 button:hover {
   background-color: #e04e22;
 }
-/* Предложения */
+
+/* ===== ПРЕДЛОЖЕНИЯ ===== */
 .offers {
   margin-top: 5%;
 }
 
 .carts {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 20px;
   margin-top: 5%;
-  flex-wrap: wrap;
 }
 
-/* Стили для каждой карточки */
 .carts > div {
   position: relative;
-  flex: 1;
-  min-width: 200px;
   overflow: hidden;
   cursor: pointer;
   transition:
     transform 0.3s ease,
     box-shadow 0.3s ease;
+  aspect-ratio: 1 / 0.9;
 }
 
 .carts > div:hover {
   transform: translateY(-10px);
 }
 
-/* Контейнер для изображения */
 .cart-image {
   width: 100%;
+  height: 100%;
   overflow: hidden;
 }
 
 .carts img {
   width: 100%;
-  height: 250px;
+  height: 100%;
   object-fit: cover;
   display: block;
   transition: transform 0.3s ease;
@@ -195,7 +193,6 @@
   transform: scale(1.05);
 }
 
-/* Черная плашка снизу */
 .cart-overlay {
   position: absolute;
   bottom: 0;
@@ -213,51 +210,15 @@
   transform: translateY(0);
 }
 
-/* Заголовок на плашке */
 .cart-title {
   font-family: "AdventPro-Bold";
-  font-size: 1.1em;
+  font-size: clamp(0.9em, 1.2vw, 1.1em);
   margin: 0;
   color: white;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
-/* Альтернативный вариант - плашка всегда видна */
-/* Если хотите, чтобы плашка была всегда видна, замените .cart-overlay на эти стили: */
-.always-visible .cart-overlay {
-  transform: translateY(0);
-  background-color: rgba(0, 0, 0, 0.611);
-  padding: 12px;
-}
-
-.always-visible .cart-title {
-  font-size: 1em;
-}
-
-/* Для мобильных устройств */
-@media (max-width: 768px) {
-  .carts {
-    flex-direction: column;
-    gap: 30px;
-  }
-
-  .carts > div {
-    min-width: auto;
-  }
-
-  .cart-overlay {
-    transform: translateY(0);
-    background-color: rgba(0, 0, 0, 0.611);
-  }
-
-  .cart-title {
-    font-size: 1em;
-  }
-}
-
-/* Если вы хотите, чтобы плашка была всегда видна (не только при наведении), 
-   используйте этот вариант вместо предыдущего */
 .static-overlay .cart-overlay {
   transform: translateY(0);
   background-color: rgba(0, 0, 0, 0.611);
@@ -265,280 +226,56 @@
 }
 
 .static-overlay .cart-title {
-  font-size: 1.1em;
+  font-size: clamp(0.8em, 1.1vw, 1.1em);
 }
 
-/* Убираем старые стили для cart1, cart2, cart3 если они мешают */
-.cart1,
-.cart2,
-.cart3,
-.cart4 {
-  padding-right: 0;
-}
-
-/* ===== АДАПТИВНОСТЬ ДЛЯ STATIC-OVERLAY ===== */
-
-/* Планшеты и небольшие экраны */
-@media (max-width: 1024px) {
-  .static-overlay .cart-overlay {
-    padding: 10px 12px;
-  }
-
-  .static-overlay .cart-title {
-    font-size: 1em;
-  }
-}
-
-/* Мобильные устройства */
-@media (max-width: 768px) {
-  .static-overlay .cart-overlay {
-    padding: 8px 10px;
-    position: relative;
-    transform: translateY(0);
-    background-color: rgba(0, 0, 0, 0.7);
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .static-overlay .cart-title {
-    font-size: 0.9em;
-    line-height: 1.3;
-    word-wrap: break-word;
-    max-width: 100%;
-  }
-
-  /* Для карточек с длинными названиями */
-  .static-overlay .cart-title {
-    white-space: normal;
-    overflow-wrap: break-word;
-    hyphens: auto;
-  }
-}
-
-/* Очень маленькие экраны */
-@media (max-width: 480px) {
-  .static-overlay .cart-overlay {
-    padding: 6px 8px;
-    min-height: 38px;
-  }
-
-  .static-overlay .cart-title {
-    font-size: 0.75em;
-    line-height: 1.2;
-  }
-}
-
-/* Для экранов с увеличенным шрифтом (доступность) */
-@media (prefers-reduced-motion: no-preference) {
-  .static-overlay .cart-overlay {
-    transition: all 0.2s ease;
-  }
-}
-
-/* Для очень больших экранов */
-@media (min-width: 1400px) {
-  .static-overlay .cart-overlay {
-    padding: 16px 20px;
-  }
-
-  .static-overlay .cart-title {
-    font-size: 1.2em;
-  }
-}
-
-/* Для пользователей с увеличенным шрифтом в системе */
-@media (prefers-reduced-motion: reduce) {
-  .static-overlay .cart-overlay {
-    transition: none;
-  }
-}
-
-/* Если текст не помещается - обрезка с многоточием для 2 строк */
-.static-overlay .cart-title {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Альтернатива - без обрезки, с переносом */
-.static-overlay .cart-title.wrap-text {
-  display: block;
-  white-space: normal;
-  overflow-wrap: break-word;
-  word-break: break-word;
-  hyphens: auto;
-  -webkit-line-clamp: unset;
-  -webkit-box-orient: unset;
-}
-/* Блок 3 */
-.block3 {
-  margin-top: 5%;
-}
-.b3-text {
-  text-align: center;
-}
-.b3-text p {
-  font-family: "AdventPro-Regular";
-  font-size: 1.5em;
-  margin-bottom: -2%;
-}
-.b3-text h1 {
-  font-family: "AdventPro-Regular";
-  font-size: 3em;
-}
-.cart-b3 {
-  display: flex;
-}
-.b3-btn button {
-  border-radius: 8px;
-  border: none;
-  background-color: #ff5f2f;
-  color: rgb(255, 255, 255);
-  font-family: "AdventPro-Bold";
-  width: 15%;
-  text-align: start;
-  padding: 1% 1% 1% 1%;
-  font-size: 1em;
-  margin-top: -1%;
-  cursor: pointer;
-}
-.b3-btn button:hover {
-  background-color: #e04e22;
-}
-.carts p {
-  font-family: "AdventPro-Regular";
-}
-.about-content {
-  display: flex;
-}
-.about-img img {
-  margin-left: 30%;
-  width: 70%;
-  padding-bottom: 10%;
-}
-.about-block {
-  margin-top: 5%;
-  margin-bottom: 5%;
-}
-.about-text h1 {
-  width: 100%;
-  font-family: "AdventPro-Bold";
-}
-.about-text p {
-  font-family: "AdventPro-Regular";
-}
-.footer {
-  background-color: black;
-  color: rgb(255, 255, 255);
-  margin-left: -12.5%;
-  margin-right: -12.5%;
-  margin-bottom: -10%;
-}
-.footer-content {
-  display: flex;
-  justify-content: space-between;
-  margin-left: 10%;
-  margin-right: 10%;
-  padding-bottom: 10%;
-  padding-top: 3%;
-}
-.footer-content h1 {
-  font-family: "AdventPro-Bold";
-}
-.footer-content p {
-  font-family: "AdventPro-Regular";
-}
-.nav-footer a {
-  text-decoration: none;
-  color: rgb(255, 255, 255);
-  padding-right: 5%;
-  font-size: 1em;
-  margin-left: 15%;
-  transition: background-color 0.3s ease;
-  font-family: "AdventPro-Regular";
-  padding-top: 10%;
-}
-.nav-footer a:hover {
-  color: #ff5f2f; /* Цвет при наведении */
-}
-.nav-footer {
-  margin-top: 2.2%;
-  width: 30%;
-  display: grid;
-}
-/* Блок 3 - Товары */
+/* ===== БЛОК 3 ===== */
 .block3 {
   margin-top: 5%;
 }
 
 .b3-text {
   text-align: center;
-  margin-bottom: 50px;
+  margin-bottom: 30px;
 }
 
 .b3-text p {
   font-family: "AdventPro-Regular";
-  font-size: 1.5em;
-  color: #000000;
-  margin-bottom: 10px;
+  font-size: clamp(1em, 1.8vw, 1.5em);
+  margin-bottom: 5px;
 }
 
 .b3-text h1 {
-  font-family: "AdventPro-Bold";
-  font-size: 2.5em;
-  color: #000000;
-  margin: 0;
+  font-family: "AdventPro-Regular";
+  font-size: clamp(1.8em, 3.5vw, 3em);
 }
 
-/* Стили для карточек товаров в Block3 */
 .block3 .carts {
-  display: flex;
-  justify-content: space-between;
-  gap: 30px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 25px;
   margin-top: 30px;
-  flex-wrap: wrap;
 }
 
 .block3 .carts > div {
-  position: relative;
-  flex: 1;
-  min-width: 220px;
   background: white;
   overflow: hidden;
   transition:
     transform 0.3s ease,
     box-shadow 0.3s ease;
   cursor: pointer;
+  aspect-ratio: auto;
 }
 
 .block3 .carts > div:hover {
   transform: translateY(-10px);
 }
 
-/* Контейнер для изображения */
-.block3 .carts .cart-image {
-  width: 100%;
-  overflow: hidden;
-  position: relative;
-}
-
 .block3 .carts img {
-  width: 100%;
   height: 250px;
   object-fit: cover;
-  display: block;
-  transition: transform 0.3s ease;
 }
 
-.block3 .carts > div:hover img {
-  transform: scale(1.05);
-}
-
-/* Информация о товаре */
 .block3 .cart-info {
   padding: 20px;
   background: white;
@@ -546,7 +283,7 @@
 
 .block3 .cart-title {
   font-family: "AdventPro-Bold";
-  font-size: 1.2em;
+  font-size: clamp(1em, 1.2vw, 1.2em);
   color: #000000;
   margin: 0 0 10px 0;
   text-align: start;
@@ -560,640 +297,107 @@
   text-align: start;
 }
 
-.block3 .cart-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: black;
-  color: white;
-  padding: 15px;
-  text-align: start;
-  transform: translateY(100%);
-  transition: transform 0.3s ease;
-}
-
-.block3 .carts > div:hover .cart-overlay {
-  transform: translateY(0);
-}
-
-.block3 .overlay-title {
-  font-family: "AdventPro-Bold";
-  font-size: 1em;
-  margin: 0;
-  color: white;
-}
-
-.block3 .overlay-price {
-  font-family: "AdventPro-Regular";
-  font-size: 0.5em;
-  margin: 5px 0 0 0;
-  color: #000000;
-}
-
-/* Кнопка "В каталог" */
 .b3-btn {
   display: flex;
   justify-content: center;
-  margin-top: 50px;
+  margin-top: 40px;
 }
 
-/* Адаптивность для мобильных устройств */
-@media (max-width: 1024px) {
-  .block3 .carts {
-    gap: 20px;
-  }
-
-  .block3 .carts > div {
-    min-width: 200px;
-  }
+.b3-btn button {
+  border-radius: 8px;
+  border: none;
+  background-color: #ff5f2f;
+  color: rgb(255, 255, 255);
+  font-family: "AdventPro-Bold";
+  width: clamp(150px, 20%, 250px);
+  padding: 12px 20px;
+  font-size: clamp(0.9em, 1.2vw, 1.2em);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.b3-btn button:hover {
+  background-color: #e04e22;
 }
 
-@media (max-width: 768px) {
-  .b3-text p {
-    font-size: 1.2em;
-  }
-
-  .b3-text h1 {
-    font-size: 1.8em;
-  }
-
-  .block3 .carts {
-    flex-direction: column;
-    gap: 30px;
-  }
-
-  .block3 .carts > div {
-    min-width: auto;
-  }
-
-  .block3 .carts img {
-    height: 200px;
-  }
-
-  .b3-btn button {
-    padding: 10px 30px;
-    font-size: 1em;
-  }
-}
-/* account.css */
-.account {
-  min-height: calc(100vh - 200px);
-  background: #f5f5f5;
-  padding: 40px 0;
-}
-
-.account-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
+/* ===== ABOUT ===== */
+.about-content {
   display: flex;
+  align-items: center;
+  gap: 40px;
+  margin-top: 5%;
+  margin-bottom: 5%;
+}
+
+.about-text {
+  flex: 1;
+}
+
+.about-text h1 {
+  font-family: "AdventPro-Bold";
+  font-size: clamp(1.8em, 3vw, 2.5em);
+}
+
+.about-text p {
+  font-family: "AdventPro-Regular";
+  font-size: clamp(0.9em, 1.2vw, 1.1em);
+  line-height: 1.6;
+}
+
+.about-img {
+  flex: 1;
+}
+
+.about-img img {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+  display: block;
+  margin-left: 15%;
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  background-color: black;
+  color: rgb(255, 255, 255);
+  margin: 0 -12.5%;
+  padding: 40px 10%;
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 30px;
 }
 
-/* Боковое меню */
-.account-sidebar {
-  width: 280px;
-  flex-shrink: 0;
-  background: white;
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  height: fit-content;
+.footer-content h1 {
+  font-family: "AdventPro-Bold";
+  font-size: clamp(1.2em, 1.8vw, 1.5em);
+  margin-bottom: 15px;
 }
 
-.user-avatar {
-  text-align: center;
-  padding: 30px 20px;
-  background: linear-gradient(135deg, #33cccc 0%, #2ba0a0 100%);
-  color: white;
+.footer-content p {
+  font-family: "AdventPro-Regular";
+  font-size: clamp(0.85em, 1vw, 1em);
 }
 
-.avatar-placeholder {
-  width: 80px;
-  height: 80px;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 36px;
-  font-family: "AdventPro-Bold", sans-serif;
-  margin: 0 auto 15px;
-  border: 3px solid white;
-}
-
-.user-avatar h3 {
-  font-family: "AdventPro-Bold", sans-serif;
-  margin: 0 0 5px;
-  font-size: 1.2em;
-}
-
-.user-avatar p {
-  font-family: "AdventPro-Regular", sans-serif;
-  margin: 0;
-  font-size: 0.85em;
-  opacity: 0.9;
-}
-
-.account-nav {
-  padding: 20px 0;
-}
-
-.account-nav button {
-  width: 100%;
-  padding: 15px 25px;
-  background: none;
-  border: none;
-  text-align: left;
-  font-family: "AdventPro-Regular", sans-serif;
-  font-size: 1em;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  color: #333;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.account-nav button:hover {
-  background: #f5f5f5;
-}
-
-.account-nav button.active {
-  background: #33cccc;
-  color: white;
-  font-family: "AdventPro-Bold", sans-serif;
-}
-
-.badge {
-  background: #ff5f2f;
-  color: white;
-  border-radius: 20px;
-  padding: 2px 8px;
-  font-size: 0.75em;
-}
-
-.logout-btn {
-  margin-top: 20px;
-  border-top: 1px solid #eee !important;
-  color: #ff5f2f !important;
-}
-
-.logout-btn:hover {
-  background: #fff0eb !important;
-}
-
-/* Основной контент */
-.account-content {
-  flex: 1;
-  background: white;
-  border-radius: 15px;
-  padding: 30px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-  padding-bottom: 15px;
-  border-bottom: 2px solid #eee;
-}
-
-.section-header h2 {
-  font-family: "AdventPro-Bold", sans-serif;
-  font-size: 1.8em;
-  color: #333;
-  margin: 0;
-}
-
-.edit-btn {
-  background: none;
-  border: 1px solid #33cccc;
-  color: #33cccc;
-  padding: 8px 20px;
-  border-radius: 25px;
-  font-family: "AdventPro-Regular", sans-serif;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.edit-btn:hover {
-  background: #33cccc;
-  color: white;
-}
-
-/* Профиль */
-.profile-info {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.info-row {
-  display: flex;
-  padding: 12px 0;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.info-label {
-  width: 150px;
-  font-family: "AdventPro-Bold", sans-serif;
-  color: #666;
-}
-
-.info-value {
-  font-family: "AdventPro-Regular", sans-serif;
-  color: #333;
-  flex: 1;
-}
-
-.profile-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
+.nav-footer {
+  display: grid;
   gap: 8px;
 }
 
-.form-group label {
-  font-family: "AdventPro-Bold", sans-serif;
-  color: #333;
-  font-size: 0.9em;
+.nav-footer a {
+  text-decoration: none;
+  color: rgb(255, 255, 255);
+  font-size: clamp(0.85em, 1vw, 1em);
+  transition: color 0.3s ease;
+  font-family: "AdventPro-Regular";
 }
 
-.form-group input,
-.form-group textarea {
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-family: "AdventPro-Regular", sans-serif;
-  font-size: 1em;
-  transition: border-color 0.3s ease;
-}
-
-.form-group input:focus,
-.form-group textarea:focus {
-  outline: none;
-  border-color: #33cccc;
-}
-
-.form-group input:disabled {
-  background: #f5f5f5;
-  color: #999;
-}
-
-.form-group small {
-  color: #999;
-  font-size: 0.75em;
-}
-
-.form-actions {
-  display: flex;
-  gap: 15px;
-  margin-top: 10px;
-}
-
-.save-btn {
-  background: #ff5f2f;
-  color: white;
-  border: none;
-  padding: 12px 30px;
-  border-radius: 8px;
-  font-family: "AdventPro-Bold", sans-serif;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.save-btn:hover {
-  background: #e04e22;
-}
-
-.cancel-btn {
-  background: #eee;
-  color: #666;
-  border: none;
-  padding: 12px 30px;
-  border-radius: 8px;
-  font-family: "AdventPro-Bold", sans-serif;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.cancel-btn:hover {
-  background: #ddd;
-}
-
-/* Заказы */
-.orders-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.order-card {
-  border: 1px solid #eee;
-  border-radius: 12px;
-  overflow: hidden;
-  transition: box-shadow 0.3s ease;
-}
-
-.order-card:hover {
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.order-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 20px;
-  background: #fafafa;
-  border-bottom: 1px solid #eee;
-}
-
-.order-number {
-  font-family: "AdventPro-Bold", sans-serif;
-  font-size: 1.1em;
-  color: #333;
-}
-
-.order-date {
-  font-family: "AdventPro-Regular", sans-serif;
-  font-size: 0.85em;
-  color: #999;
-  margin-left: 15px;
-}
-
-.order-status {
-  font-family: "AdventPro-Bold", sans-serif;
-  font-size: 0.85em;
-}
-
-.order-items {
-  padding: 15px 20px;
-}
-
-.order-item {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  padding: 10px 0;
-  border-bottom: 1px solid #f5f5f5;
-}
-
-.order-item:last-child {
-  border-bottom: none;
-}
-
-.order-item img {
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 8px;
-  background: #f5f5f5;
-}
-
-.order-item-info {
-  flex: 1;
-}
-
-.order-item-info h4 {
-  font-family: "AdventPro-Bold", sans-serif;
-  margin: 0 0 5px;
-  font-size: 0.95em;
-}
-
-.order-item-info p {
-  font-family: "AdventPro-Regular", sans-serif;
-  margin: 0;
-  font-size: 0.85em;
-  color: #666;
-}
-
-.order-item-price {
-  font-family: "AdventPro-Bold", sans-serif;
+.nav-footer a:hover {
   color: #ff5f2f;
 }
 
-.order-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 20px;
-  background: #fafafa;
-  border-top: 1px solid #eee;
-}
-
-.order-total {
-  font-family: "AdventPro-Regular", sans-serif;
-  font-size: 1em;
-}
-
-.order-total span {
-  font-family: "AdventPro-Bold", sans-serif;
-  font-size: 1.2em;
-  color: #ff5f2f;
-}
-
-.cancel-order-btn {
-  background: none;
-  border: 1px solid #ff5f2f;
-  color: #ff5f2f;
-  padding: 8px 20px;
-  border-radius: 25px;
-  font-family: "AdventPro-Regular", sans-serif;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.cancel-order-btn:hover {
-  background: #ff5f2f;
-  color: white;
-}
-
-.repeat-order-btn {
-  background: none;
-  border: 1px solid #33cccc;
-  color: #33cccc;
-  padding: 8px 20px;
-  border-radius: 25px;
-  font-family: "AdventPro-Regular", sans-serif;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.repeat-order-btn:hover {
-  background: #33cccc;
-  color: white;
-}
-
-/* Избранное */
-.favorites-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 25px;
-}
-
-.favorite-card {
-  background: white;
-  border: 1px solid #eee;
-  border-radius: 12px;
-  overflow: hidden;
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
-}
-
-.favorite-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.favorite-card img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  background: #f5f5f5;
-}
-
-.favorite-info {
-  padding: 15px;
-}
-
-.favorite-info h4 {
-  font-family: "AdventPro-Bold", sans-serif;
-  margin: 0 0 8px;
-  font-size: 1em;
-}
-
-.favorite-price {
-  font-family: "AdventPro-Bold", sans-serif;
-  color: #ff5f2f;
-  font-size: 1.1em;
-  margin: 0 0 15px;
-}
-
-.favorite-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.add-to-cart-btn {
-  flex: 1;
-  background: #33cccc;
-  color: white;
-  border: none;
-  padding: 8px;
-  border-radius: 6px;
-  font-family: "AdventPro-Regular", sans-serif;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.add-to-cart-btn:hover {
-  background: #2ba0a0;
-}
-
-.remove-fav-btn {
-  background: none;
-  border: 1px solid #ddd;
-  padding: 8px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.remove-fav-btn:hover {
-  border-color: #ff5f2f;
-}
-
-/* Empty state */
-.empty-state {
-  text-align: center;
-  padding: 60px 20px;
-}
-
-.empty-state p {
-  font-family: "AdventPro-Regular", sans-serif;
-  font-size: 1.1em;
-  color: #999;
-  margin-bottom: 20px;
-}
-
-.catalog-btn {
-  background: #ff5f2f;
-  color: white;
-  border: none;
-  padding: 12px 30px;
-  border-radius: 25px;
-  font-family: "AdventPro-Bold", sans-serif;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.catalog-btn:hover {
-  background: #e04e22;
-}
-
-.account-loading {
-  text-align: center;
-  padding: 100px;
-  font-family: "AdventPro-Regular", sans-serif;
-  font-size: 1.2em;
-  color: #999;
-}
-
-/* Адаптивность */
-@media (max-width: 768px) {
-  .account-container {
-    flex-direction: column;
-  }
-
-  .account-sidebar {
-    width: 100%;
-  }
-
-  .account-content {
-    padding: 20px;
-  }
-
-  .section-header {
-    flex-direction: column;
-    gap: 15px;
-    align-items: flex-start;
-  }
-
-  .info-row {
-    flex-direction: column;
-    gap: 5px;
-  }
-
-  .info-label {
-    width: auto;
-  }
-
-  .order-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .order-footer {
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  .favorites-grid {
-    grid-template-columns: 1fr;
-  }
-}
-/* ===== КНОПКА-ТРИГГЕР (иконка чата) ===== */
+/* ===== ЧАТ ===== */
 .chat-trigger {
   position: fixed;
   bottom: 30px;
@@ -1219,11 +423,6 @@
   background: #2ba0a0;
 }
 
-.chat-trigger:active {
-  transform: scale(0.95);
-}
-
-/* Бейдж с количеством непрочитанных */
 .chat-badge {
   position: absolute;
   top: -5px;
@@ -1241,7 +440,6 @@
   box-shadow: 0 2px 8px rgba(255, 95, 47, 0.3);
 }
 
-/* ===== ВИДЖЕТ (обёртка для модалки) ===== */
 .chat-widget {
   position: fixed;
   bottom: 30px;
@@ -1263,7 +461,6 @@
   }
 }
 
-/* ===== МОДАЛЬНОЕ ОКНО ===== */
 .chat-modal {
   background: white;
   border-radius: 20px;
@@ -1274,7 +471,6 @@
   border: 1px solid #f0f0f0;
 }
 
-/* ===== ЗАГОЛОВОК ===== */
 .chat-header {
   display: flex;
   justify-content: space-between;
@@ -1307,7 +503,6 @@
   background: #fff0eb;
 }
 
-/* ===== ОБЛАСТЬ СООБЩЕНИЙ ===== */
 .chat-messages {
   flex: 1;
   overflow-y: auto;
@@ -1337,7 +532,6 @@
   font-size: 0.9em;
 }
 
-/* ===== ОДНО СООБЩЕНИЕ ===== */
 .chat-message {
   display: flex;
   flex-direction: column;
@@ -1370,7 +564,6 @@
   padding-left: 8px;
 }
 
-/* ===== ПОЛЕ ВВОДА ===== */
 .chat-input-area {
   display: flex;
   padding: 12px 16px;
@@ -1395,10 +588,6 @@
   box-shadow: 0 0 0 4px rgba(51, 204, 204, 0.15);
 }
 
-.chat-input::placeholder {
-  color: #bbb;
-}
-
 .chat-send-btn {
   background: #ff5f2f;
   color: white;
@@ -1420,189 +609,386 @@
   box-shadow: 0 4px 15px rgba(255, 95, 47, 0.3);
 }
 
-.chat-send-btn:active {
-  transform: scale(0.95);
-}
-
 /* ===== АДАПТИВНОСТЬ ===== */
-@media (max-width: 768px) {
-  .chat-trigger {
-    bottom: 20px;
-    right: 20px;
-    width: 54px;
-    height: 54px;
-  }
-
-  .chat-widget {
-    bottom: 85px;
-    right: 20px;
-    width: 340px;
-    max-width: calc(100vw - 40px);
-  }
-}
-
-@media (max-width: 480px) {
-  .chat-trigger {
-    bottom: 16px;
-    right: 16px;
-    width: 48px;
-    height: 48px;
-  }
-
-  .chat-widget {
-    bottom: 72px;
-    right: 10px;
-    width: calc(100vw - 20px);
-    max-width: 100%;
-  }
-
-  .chat-modal {
-    border-radius: 16px;
-  }
-
-  .chat-header {
-    padding: 12px 16px;
-  }
-
-  .chat-messages {
-    padding: 12px 14px;
-    min-height: 150px;
-    max-height: 250px;
-  }
-
-  .chat-input-area {
-    padding: 10px 14px;
-    gap: 8px;
-  }
-
-  .chat-send-btn {
-    width: 40px;
-    height: 40px;
-  }
-}
-.active {
-  display: block;
-}
-.noActive {
-  display: none;
-}
-/* ===== АДАПТИВНОСТЬ ДЛЯ БЛОКА ABOUT ===== */
 
 /* Планшеты и маленькие ноутбуки */
 @media (max-width: 1024px) {
-  .about-content {
-    flex-direction: column;
-    align-items: center;
-    padding: 0 20px;
+  body {
+    padding: 0 5%;
   }
 
-  .about-text {
-    text-align: center;
-    margin-bottom: 30px;
-    width: 100%;
+  .footer {
+    margin: 0 -5%;
+    padding: 40px 5%;
   }
 
-  .about-text h1 {
-    font-size: 2.2em !important;
-    text-align: center;
+  .header {
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 5px;
   }
 
-  .about-text p {
-    font-size: 1em !important;
-    line-height: 1.6;
-    text-align: center;
-    padding: 0 10px;
+  .nav-head {
+    gap: 10px;
   }
 
-  .about-text p br {
-    display: none;
+  .nav-head a {
+    font-size: 0.9em;
+    padding: 5px 8px;
   }
 
-  .about-img {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-  }
-
-  .about-img img {
-    margin-left: 0 !important;
-    width: 80% !important;
-    max-width: 500px;
-    padding-bottom: 5%;
+  .header-btn button {
+    padding: 8px 18px;
+    font-size: 0.9em;
   }
 }
 
-/* Мобильные устройства (телефоны) */
+/* Планшеты */
 @media (max-width: 768px) {
-  .about-block {
-    margin-top: 30px;
-    margin-bottom: 30px;
-    padding: 0 15px;
+  body {
+    padding: 0 3%;
   }
 
-  .about-content {
-    flex-direction: column;
-    align-items: center;
-    padding: 0 10px;
+  .footer {
+    margin: 0 -3%;
+    padding: 30px 3%;
   }
 
-  .about-text {
+  /* Шапка */
+  .header {
+    grid-template-columns: 1fr 2fr;
+    height: auto;
+    padding: 10px 0;
+    gap: 5px;
+  }
+
+  .logo {
+    height: 60px;
+    width: 120px;
+  }
+
+  .nav-head {
+    order: 3;
+    grid-column: 1 / -1;
+    justify-content: center;
+    gap: 8px;
+    padding: 5px 0;
+    border-top: 1px solid #eee;
+  }
+
+  .nav-head a {
+    font-size: 0.85em;
+    padding: 5px 8px;
+  }
+
+  .header-btn {
+    justify-self: end;
+  }
+
+  .header-btn button {
+    padding: 8px 16px;
+    font-size: 0.85em;
+  }
+
+  /* Блок 1 */
+  .content-block1 {
+    grid-template-columns: 1fr;
+    padding: 30px 20px;
+    min-height: auto;
+  }
+
+  .text-b1 {
+    text-align: center;
+  }
+
+  .text-b1 h1 {
+    font-size: clamp(1.5em, 4vw, 2em);
+  }
+
+  .content-block1 p {
+    font-size: clamp(0.9em, 2vw, 1.1em);
+  }
+
+  .b1-img {
+    position: relative;
     width: 100%;
-    text-align: center;
-    padding: 0 5px;
+    height: 200px;
+    margin-top: 20px;
   }
 
-  .about-text h1 {
-    font-size: 1.8em !important;
-    text-align: center;
-    margin-bottom: 15px;
-  }
-
-  .about-text p {
-    font-size: 0.9em !important;
-    line-height: 1.7;
-    text-align: center;
-    padding: 0 5px;
-  }
-
-  .about-text p br {
-    display: none;
-  }
-
-  .about-img {
-    width: 100%;
+  .btn-b1 {
     display: flex;
     justify-content: center;
-    margin-top: 10px;
+  }
+
+  .btn-b1 button {
+    width: 60%;
+    max-width: 200px;
+    padding: 10px 15px;
+  }
+
+  /* О нас */
+  .about-content {
+    flex-direction: column;
+    text-align: center;
   }
 
   .about-img img {
-    margin-left: 0 !important;
-    width: 90% !important;
-    max-width: 400px;
-    padding-bottom: 0;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .about-text h1 {
+    font-size: clamp(1.5em, 3vw, 2em);
+  }
+
+  /* Футер */
+  .footer-content {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 20px;
+  }
+
+  .nav-footer {
+    align-items: center;
+  }
+
+  .nav-footer a {
+    padding: 3px 0;
   }
 }
 
-/* Очень маленькие экраны */
+/* Мобильные телефоны */
 @media (max-width: 480px) {
-  .about-block {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    padding: 0 10px;
+  body {
+    padding: 0 2%;
   }
 
+  .footer {
+    margin: 0 -2%;
+    padding: 20px 2%;
+  }
+
+  /* Шапка */
+  .header {
+    grid-template-columns: 1fr 1fr;
+    padding: 8px 0;
+    min-height: auto;
+  }
+
+  .logo {
+    height: 45px;
+    width: 90px;
+  }
+
+  .nav-head {
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
+  .nav-head a {
+    font-size: 0.7em;
+    padding: 3px 5px;
+  }
+
+  .header-btn button {
+    padding: 6px 12px;
+    font-size: 0.75em;
+  }
+
+  /* Блок 1 */
+  .content-block1 {
+    padding: 20px 15px;
+  }
+
+  .text-b1 h1 {
+    font-size: 1.3em;
+  }
+
+  .content-block1 p {
+    font-size: 0.9em;
+  }
+
+  .b1-img {
+    height: 150px;
+  }
+
+  .btn-b1 button {
+    width: 80%;
+    font-size: 0.9em;
+    padding: 8px 12px;
+  }
+
+  /* Карточки */
+  .carts {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+  }
+
+  .carts > div {
+    aspect-ratio: 1 / 0.8;
+  }
+
+  .carts img {
+    height: auto;
+  }
+
+  .block3 .carts {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 15px;
+  }
+
+  .block3 .carts img {
+    height: 150px;
+  }
+
+  .block3 .cart-title {
+    font-size: 0.9em;
+  }
+
+  .block3 .cart-price {
+    font-size: 0.85em;
+  }
+
+  .b3-text p {
+    font-size: 0.9em;
+  }
+
+  .b3-text h1 {
+    font-size: 1.3em;
+  }
+
+  .b3-btn button {
+    width: 80%;
+    max-width: 200px;
+    padding: 10px 15px;
+    font-size: 0.9em;
+  }
+
+  /* Чат */
+  .chat-trigger {
+    width: 50px;
+    height: 50px;
+    bottom: 15px;
+    right: 15px;
+  }
+
+  .chat-trigger svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .chat-widget {
+    width: calc(100vw - 20px);
+    bottom: 15px;
+    right: 10px;
+  }
+
+  .chat-messages {
+    max-height: 250px;
+    min-height: 150px;
+    padding: 12px 15px;
+  }
+
+  .chat-header {
+    padding: 12px 15px;
+  }
+
+  .chat-header h3 {
+    font-size: 1em;
+  }
+
+  .chat-input-area {
+    padding: 10px 12px;
+  }
+
+  .chat-input {
+    font-size: 0.8em;
+    padding: 6px 12px;
+  }
+
+  .chat-send-btn {
+    width: 38px;
+    height: 38px;
+  }
+
+  .message-bubble p {
+    font-size: 0.8em;
+  }
+
+  /* О нас */
   .about-text h1 {
-    font-size: 1.5em !important;
+    font-size: 1.3em;
   }
 
   .about-text p {
-    font-size: 0.85em !important;
-    line-height: 1.6;
+    font-size: 0.85em;
   }
 
-  .about-img img {
-    width: 95% !important;
-    max-width: 300px;
+  /* Футер */
+  .footer-content h1 {
+    font-size: 1.1em;
+  }
+
+  .footer-content p {
+    font-size: 0.8em;
+  }
+
+  .nav-footer a {
+    font-size: 0.8em;
+  }
+
+  .cart-overlay {
+    padding: 8px;
+  }
+
+  .cart-title {
+    font-size: 0.7em;
+  }
+}
+
+/* ===== ДОПОЛНИТЕЛЬНЫЕ МЕЛКИЕ ЭКРАНЫ ===== */
+@media (max-width: 360px) {
+  .nav-head a {
+    font-size: 0.6em;
+    padding: 2px 4px;
+  }
+
+  .header-btn button {
+    padding: 4px 10px;
+    font-size: 0.7em;
+  }
+
+  .text-b1 h1 {
+    font-size: 1.1em;
+  }
+
+  .content-block1 p {
+    font-size: 0.8em;
+  }
+
+  .carts {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .block3 .carts {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .block3 .carts img {
+    height: 120px;
+  }
+
+  .block3 .cart-info {
+    padding: 10px;
+  }
+
+  .block3 .cart-title {
+    font-size: 0.8em;
+  }
+
+  .block3 .cart-price {
+    font-size: 0.75em;
   }
 }

@@ -1,24 +1,28 @@
 import { useNavigate } from "react-router-dom";
+import "../styles/catalog.css"; // Импортируем стили из каталога
+
 const Block3 = () => {
   const navigate = useNavigate();
+
   const handleCatalogClick = (e) => {
     e.preventDefault();
     navigate("/catalog");
   };
+
   const products = [
     {
       id: 1,
       title: "Дубовая дверь",
       price: "15 000 ₽",
       image: "/src/assets/cart3_new.jpg",
-      discription: "Размер",
+      description: "Размер",
       alt: "Дубовая дверь",
     },
     {
       id: 2,
       title: "Белая дверь",
       price: "12 500 ₽",
-      discription: "Размер",
+      description: "Размер",
       image: "/src/assets/cart3_new.jpg",
       alt: "Белая дверь",
     },
@@ -28,7 +32,7 @@ const Block3 = () => {
       price: "18 000 ₽",
       image: "/src/assets/cart3_new.jpg",
       alt: "Дверь венге",
-      discription: "Размер",
+      description: "Размер",
     },
     {
       id: 4,
@@ -36,7 +40,7 @@ const Block3 = () => {
       price: "22 000 ₽",
       image: "/src/assets/cart3_new.jpg",
       alt: "Стеклянная дверь",
-      discription: "Размер",
+      description: "Размер",
     },
   ];
 
@@ -49,14 +53,14 @@ const Block3 = () => {
         </div>
         <div className="carts">
           {products.map((product) => (
-            <div key={product.id} className={`cart${product.id}`}>
+            <div key={product.id} className="cart-item">
               <div className="cart-image">
                 <img src={product.image} alt={product.alt} />
               </div>
               <div className="cart-info">
                 <p className="cart-title">{product.title}</p>
                 <p className="cart-price">{product.price}</p>
-                <p className="cart-discription">{product.discription}</p>
+                <p className="cart-description">{product.description}</p>
               </div>
             </div>
           ))}
